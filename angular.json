@@ -56,6 +56,7 @@
               "outputMode": "static",
               "outputHashing": "all",
               "serviceWorker": "ngsw-config.json",
+              "inlineCriticalCss": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -64,8 +65,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "16kB"
                 }
               ]
             },

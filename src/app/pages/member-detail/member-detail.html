@@ -1,0 +1,174 @@
+<div class="page">
+  <button class="back-btn" (click)="goBack()">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    Members
+  </button>
+
+  @if (member(); as m) {
+    <div class="member-hero">
+      <div class="avatar">{{ m.name.charAt(0).toUpperCase() }}</div>
+      @if (!editing()) {
+        <div class="hero-info">
+          <h2>{{ m.name }}</h2>
+          @if (m.phone) { <span class="hero-sub"><ion-icon name="call-outline"></ion-icon> {{ m.phone }}</span> }
+          @if (m.email) { <span class="hero-sub"><ion-icon name="mail-outline"></ion-icon> {{ m.email }}</span> }
+          @if (m.notes) { <span class="hero-notes">{{ m.notes }}</span> }
+        </div>
+        <div class="hero-actions">
+          <button class="btn-icon" (click)="startEdit()" title="Edit">
+            <ion-icon name="pencil-outline"></ion-icon>
+          </button>
+          <button class="btn-icon" [class.btn-icon--danger]="m.active" (click)="toggleActive()" [title]="m.active ? 'Deactivate' : 'Reactivate'">
+            <ion-icon [name]="m.active ? 'person-remove-outline' : 'person-add-outline'"></ion-icon>
+          </button>
+        </div>
+      } @else {
+        <div class="edit-form">
+          <div class="form-group">
+            <label>Name *</label>
+            <input type="text" [(ngModel)]="editName" />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" [(ngModel)]="editPhone" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="editEmail" />
+          </div>
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea [(ngModel)]="editNotes" rows="2"></textarea>
+          </div>
+          <div class="edit-actions">
+            <button class="btn-ghost" (click)="editing.set(false)">Cancel</button>
+            <button class="btn-primary" (click)="saveEdit()" [disabled]="editLoading() || !editName.trim()">
+              @if (editLoading()) { Saving… } @else { Save }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h3>Unpaid Dues <span class="count">{{ unpaidDues().length }}</span></h3>
+        <button class="btn-add" (click)="openAddDue()">
+          <ion-icon name="add-outline"></ion-icon> Add Due
+        </button>
+      </div>
+
+      @if (unpaidDues().length === 0) {
+        <div class="empty-small">No pending dues</div>
+      } @else {
+        <div class="due-list">
+          @for (due of unpaidDues(); track due.id) {
+            <div class="due-card" [class.overdue]="isOverdue(due)">
+              <div class="due-info">
+                <span class="due-desc">{{ due.description }}</span>
+                <span class="due-date" [class.overdue]="isOverdue(due)">
+                  <ion-icon [name]="isOverdue(due) ? 'warning-outline' : 'calendar-outline'"></ion-icon>
+                  {{ formatDate(due.dueDate) }}
+                </span>
+              </div>
+              <span class="due-amount">{{ formatCurrency(due.amount) }}</span>
+              <div class="due-actions">
+                <button class="btn-paid" (click)="markPaid(due.id)" title="Mark as paid">
+                  <ion-icon name="checkmark-outline"></ion-icon>
+                </button>
+                <button class="btn-delete" (click)="confirmDeleteId.set(due.id)" title="Delete">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h3>Paid Dues <span class="count">{{ paidDues().length }}</span></h3>
+      </div>
+      @if (paidDues().length === 0) {
+        <div class="empty-small">No paid dues yet</div>
+      } @else {
+        <div class="due-list">
+          @for (due of paidDues(); track due.id) {
+            <div class="due-card due-card--paid">
+              <div class="due-info">
+                <span class="due-desc">{{ due.description }}</span>
+                <span class="due-date paid">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Paid {{ formatDate(due.paidAt!) }}
+                </span>
+              </div>
+              <span class="due-amount paid">{{ formatCurrency(due.amount) }}</span>
+              <div class="due-actions">
+                <button class="btn-icon-sm" (click)="markUnpaid(due.id)" title="Mark as unpaid">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <ion-icon name="person-outline"></ion-icon>
+      <p>Member not found</p>
+    </div>
+  }
+</div>
+
+@if (showAddDue()) {
+  <div class="modal-backdrop" (click)="showAddDue.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Add Due</h3>
+        <button class="modal-close" (click)="showAddDue.set(false)">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Description *</label>
+          <input type="text" [(ngModel)]="dueDesc" placeholder="e.g. Monthly fee – Jan 2025" />
+        </div>
+        <div class="form-group">
+          <label>Amount (€) *</label>
+          <input type="number" [(ngModel)]="dueAmount" placeholder="0.00" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Due Date *</label>
+          <input type="date" [(ngModel)]="dueDateStr" />
+        </div>
+        @if (addDueError()) { <p class="error-msg">{{ addDueError() }}</p> }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="showAddDue.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="addDue()" [disabled]="addDueLoading()">
+          @if (addDueLoading()) { Adding… } @else { Add Due }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (confirmDeleteId()) {
+  <div class="modal-backdrop" (click)="confirmDeleteId.set(null)">
+    <div class="modal modal--sm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Delete Due?</h3>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); margin: 0;">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="confirmDeleteId.set(null)">Cancel</button>
+        <button class="btn-danger" (click)="deleteDue(confirmDeleteId()!)">Delete</button>
+      </div>
+    </div>
+  </div>
+}

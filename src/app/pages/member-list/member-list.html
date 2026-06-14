@@ -1,0 +1,97 @@
+<div class="page">
+  <div class="page-header">
+    <h2>Members</h2>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <ion-icon name="search-outline"></ion-icon>
+      <input
+        type="search"
+        placeholder="Search members…"
+        [(ngModel)]="search"
+        (ngModelChange)="search.set($event)"
+      />
+    </div>
+    <div class="filter-tabs">
+      @for (f of filterOptions; track f) {
+        <button
+          class="filter-tab"
+          [class.active]="filter() === f"
+          (click)="filter.set(f)"
+        >{{ f | titlecase }}</button>
+      }
+    </div>
+  </div>
+
+  @if (filtered().length === 0) {
+    <div class="empty-state">
+      <ion-icon name="person-outline"></ion-icon>
+      <p>No members found</p>
+    </div>
+  } @else {
+    <div class="member-list">
+      @for (m of filtered(); track m.id) {
+        <a [routerLink]="['/members', m.id]" class="member-card">
+          <div class="member-avatar">{{ m.name.charAt(0).toUpperCase() }}</div>
+          <div class="member-info">
+            <span class="member-name">{{ m.name }}</span>
+            @if (m.phone) { <span class="member-sub">{{ m.phone }}</span> }
+          </div>
+          <div class="member-dues">
+            @if (pendingDuesCount(m.id) > 0) {
+              <span class="badge-unpaid">{{ pendingDuesCount(m.id) }} due</span>
+              <span class="owed">{{ formatCurrency(totalOwed(m.id)) }}</span>
+            }
+            @if (!m.active) {
+              <span class="badge-inactive">Inactive</span>
+            }
+          </div>
+          <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
+        </a>
+      }
+    </div>
+  }
+
+  <button class="fab" (click)="openAdd()" title="Add member">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+</div>
+
+@if (showAddModal()) {
+  <div class="modal-backdrop" (click)="showAddModal.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Add Member</h3>
+        <button class="modal-close" (click)="showAddModal.set(false)">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" [(ngModel)]="newName" placeholder="Member name" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" [(ngModel)]="newPhone" placeholder="+351 9xx xxx xxx" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="newEmail" placeholder="member@email.com" />
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea [(ngModel)]="newNotes" rows="2" placeholder="Optional notes…"></textarea>
+        </div>
+        @if (addError()) { <p class="error-msg">{{ addError() }}</p> }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="showAddModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="addMember()" [disabled]="addLoading() || !newName.trim()">
+          @if (addLoading()) { Adding… } @else { Add Member }
+        </button>
+      </div>
+    </div>
+  </div>
+}

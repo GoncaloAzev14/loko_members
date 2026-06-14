@@ -1,0 +1,95 @@
+<div class="page">
+  <div class="page-header">
+    <h2>Settings</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-section">
+      <div class="card-label">Club Name</div>
+      @if (!editingName()) {
+        <div class="card-row">
+          <span class="card-value">{{ clubService.club()?.name }}</span>
+          @if (isOwner) {
+            <button class="btn-icon-sm" (click)="startEditName()" title="Edit">
+              <ion-icon name="pencil-outline"></ion-icon>
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="inline-edit">
+          <input type="text" [(ngModel)]="newClubName" />
+          <button class="btn-ghost-sm" (click)="editingName.set(false)">Cancel</button>
+          <button class="btn-primary-sm" (click)="saveName()" [disabled]="savingName() || !newClubName.trim()">
+            @if (savingName()) { Saving… } @else { Save }
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-section">
+      <div class="card-label">Invite Code</div>
+      <p class="card-hint">Share this code with team members so they can join your workspace.</p>
+      <div class="invite-row">
+        <span class="invite-code" [class.blurred]="!codeVisible()">
+          {{ codeVisible() ? clubService.club()?.inviteCode : '••••••' }}
+        </span>
+        <button class="btn-icon-sm" (click)="codeVisible.set(!codeVisible())" [title]="codeVisible() ? 'Hide' : 'Show'">
+          <ion-icon [name]="codeVisible() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </button>
+        <button class="btn-icon-sm" (click)="copyCode()" title="Copy">
+          <ion-icon name="copy-outline"></ion-icon>
+        </button>
+      </div>
+      @if (isOwner) {
+        <button class="btn-ghost-full" (click)="regenerateCode()" [disabled]="regenerating()">
+          <ion-icon name="refresh-outline"></ion-icon>
+          @if (regenerating()) { Regenerating… } @else { Generate new code }
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-section">
+      <div class="card-label">Team</div>
+      <div class="manager-list">
+        @for (m of managers(); track m.uid) {
+          <div class="manager-row">
+            <div class="manager-avatar">{{ m.name.charAt(0).toUpperCase() }}</div>
+            <div class="manager-info">
+              <span class="manager-name">{{ m.name }}</span>
+              <span class="manager-email">{{ m.email }}</span>
+            </div>
+            <span class="role-badge" [class.owner]="m.role === 'owner'">{{ m.role }}</span>
+            @if (isOwner && m.uid !== auth.uid && m.role !== 'owner') {
+              <button class="btn-icon-sm btn-icon-danger" (click)="confirmRemoveUid.set(m.uid)" title="Remove">
+                <ion-icon name="remove-circle-outline"></ion-icon>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (confirmRemoveUid()) {
+  <div class="modal-backdrop" (click)="confirmRemoveUid.set(null)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Remove Manager?</h3>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); margin: 0;">
+          They will lose access to this club workspace.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="confirmRemoveUid.set(null)">Cancel</button>
+        <button class="btn-danger" (click)="removeManager(confirmRemoveUid()!)">Remove</button>
+      </div>
+    </div>
+  </div>
+}

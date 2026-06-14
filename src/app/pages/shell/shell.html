@@ -1,0 +1,30 @@
+<div class="app-layout">
+  <header class="top-bar">
+    <span class="club-name">{{ clubService.club()?.name ?? 'Loko Members' }}</span>
+    <button class="sign-out-btn" (click)="auth.signOut()" title="Sign out">
+      <ion-icon name="log-out-outline"></ion-icon>
+    </button>
+  </header>
+
+  <main class="page-content">
+    <router-outlet />
+  </main>
+
+  <nav class="bottom-nav">
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+      <ion-icon name="grid-outline" class="inactive-icon"></ion-icon>
+      <ion-icon name="grid" class="active-icon"></ion-icon>
+      <span>Dashboard</span>
+    </a>
+    <a routerLink="/members" routerLinkActive="active" class="nav-item">
+      <ion-icon name="people-outline" class="inactive-icon"></ion-icon>
+      <ion-icon name="people" class="active-icon"></ion-icon>
+      <span>Members</span>
+    </a>
+    <a routerLink="/settings" routerLinkActive="active" class="nav-item">
+      <ion-icon name="settings-outline" class="inactive-icon"></ion-icon>
+      <ion-icon name="settings" class="active-icon"></ion-icon>
+      <span>Settings</span>
+    </a>
+  </nav>
+</div>

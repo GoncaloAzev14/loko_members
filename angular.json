@@ -28,6 +28,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/ionicons/dist/ionicons",
+                "output": "ionicons"
               }
             ],
             "styles": [

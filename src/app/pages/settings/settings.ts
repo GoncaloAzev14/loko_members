@@ -23,6 +23,7 @@ export class SettingsComponent implements OnInit {
   savingName = signal(false);
 
   confirmRemoveUid = signal<string | null>(null);
+  confirmPromoteUid = signal<string | null>(null);
   codeVisible = signal(false);
   regenerating = signal(false);
 
@@ -30,9 +31,8 @@ export class SettingsComponent implements OnInit {
     this.managers.set(await this.clubService.getManagers());
   }
 
-  get isOwner(): boolean {
-    const uid = this.auth.uid;
-    return this.managers().find((m) => m.uid === uid)?.role === 'owner';
+  get isAdmin(): boolean {
+    return this.clubService.isAdmin;
   }
 
   startEditName() {
@@ -64,6 +64,12 @@ export class SettingsComponent implements OnInit {
     await this.clubService.removeManager(uid);
     this.managers.set(await this.clubService.getManagers());
     this.confirmRemoveUid.set(null);
+  }
+
+  async promoteToAdmin(uid: string) {
+    await this.clubService.promoteToAdmin(uid);
+    this.managers.set(await this.clubService.getManagers());
+    this.confirmPromoteUid.set(null);
   }
 
   copyCode() {

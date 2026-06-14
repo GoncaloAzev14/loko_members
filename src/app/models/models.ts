@@ -33,7 +33,7 @@ export interface Manager {
   uid: string;
   name: string;
   email: string;
-  role: 'owner' | 'manager';
+  role: 'admin' | 'owner' | 'manager'; // 'owner' kept for backward compat with existing docs
   joinedAt: Timestamp;
 }
 

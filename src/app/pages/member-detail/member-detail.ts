@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MemberService } from '../../services/member.service';
 import { DuesService } from '../../services/dues.service';
+import { ClubService } from '../../services/club.service';
 import { Member, Due } from '../../models/models';
 import { Timestamp } from '@angular/fire/firestore';
 import { map } from 'rxjs';
@@ -21,6 +22,7 @@ export class MemberDetailComponent implements OnInit {
   private router = inject(Router);
   private memberService = inject(MemberService);
   private duesService = inject(DuesService);
+  clubService = inject(ClubService);
   i18n = inject(I18nService);
 
   memberId = this.route.snapshot.paramMap.get('id')!;

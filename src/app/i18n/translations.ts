@@ -139,8 +139,13 @@ const en = {
   'settings.removeConfirm': 'They will lose access to this club workspace.',
   'settings.confirmRemove': 'Remove',
   'settings.language': 'Language',
-  'settings.role_owner': 'owner',
+  'settings.role_admin': 'admin',
+  'settings.role_owner': 'admin',
   'settings.role_manager': 'manager',
+  'settings.promoteToAdmin': 'Promote to Admin',
+  'settings.promoteTitle': 'Promote to Admin?',
+  'settings.promoteConfirm': 'This person will be able to manage members and invite others.',
+  'settings.confirmPromote': 'Promote',
 };
 
 const pt: typeof en = {
@@ -282,8 +287,13 @@ const pt: typeof en = {
   'settings.removeConfirm': 'O utilizador perderá o acesso a este espaço do clube.',
   'settings.confirmRemove': 'Remover',
   'settings.language': 'Idioma',
-  'settings.role_owner': 'dono',
+  'settings.role_admin': 'admin',
+  'settings.role_owner': 'admin',
   'settings.role_manager': 'gestor',
+  'settings.promoteToAdmin': 'Promover a admin',
+  'settings.promoteTitle': 'Promover a admin?',
+  'settings.promoteConfirm': 'Esta pessoa poderá gerir membros e convidar outros.',
+  'settings.confirmPromote': 'Promover',
 };
 
 export const translations: Record<Lang, typeof en> = { en, pt };

@@ -22,6 +22,12 @@ export class ClubService {
 
   clubId = signal<string | null>(null);
   club = signal<Club | null>(null);
+  currentManagerRole = signal<Manager['role'] | null>(null);
+
+  get isAdmin(): boolean {
+    const r = this.currentManagerRole();
+    return r === 'admin' || r === 'owner';
+  }
 
   async loadUserClub(): Promise<void> {
     const uid = this.auth.uid;
@@ -36,9 +42,16 @@ export class ClubService {
   }
 
   private async loadClub(clubId: string): Promise<void> {
-    const clubDoc = await getDoc(doc(this.firestore, 'clubs', clubId));
+    const uid = this.auth.uid;
+    const [clubDoc, managerDoc] = await Promise.all([
+      getDoc(doc(this.firestore, 'clubs', clubId)),
+      uid ? getDoc(doc(this.firestore, 'clubs', clubId, 'managers', uid)) : Promise.resolve(null),
+    ]);
     if (clubDoc.exists()) {
       this.club.set({ id: clubId, ...clubDoc.data() } as Club);
+    }
+    if (managerDoc?.exists()) {
+      this.currentManagerRole.set((managerDoc.data() as Manager).role);
     }
   }
 
@@ -63,9 +76,9 @@ export class ClubService {
 
     const manager: Manager = {
       uid,
-      name: user.displayName ?? user.email ?? 'Owner',
+      name: user.displayName ?? user.email ?? 'Admin',
       email: user.email ?? '',
-      role: 'owner',
+      role: 'admin',
       joinedAt: Timestamp.now(),
     };
     await setDoc(doc(this.firestore, 'clubs', clubId, 'managers', uid), manager);
@@ -125,6 +138,12 @@ export class ClubService {
     if (!clubId) return;
     const { deleteDoc } = await import('@angular/fire/firestore');
     await deleteDoc(doc(this.firestore, 'clubs', clubId, 'managers', uid));
+  }
+
+  async promoteToAdmin(uid: string): Promise<void> {
+    const clubId = this.clubId();
+    if (!clubId) return;
+    await updateDoc(doc(this.firestore, 'clubs', clubId, 'managers', uid), { role: 'admin' });
   }
 
   async regenerateInviteCode(): Promise<string> {

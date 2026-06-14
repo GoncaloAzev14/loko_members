@@ -9,7 +9,7 @@
       @if (!editingName()) {
         <div class="card-row">
           <span class="card-value">{{ clubService.club()?.name }}</span>
-          @if (isOwner) {
+          @if (isAdmin) {
             <button class="btn-icon-sm" (click)="startEditName()" [title]="i18n.t('settings.edit')">
               <ion-icon name="pencil-outline"></ion-icon>
             </button>
@@ -27,29 +27,29 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-section">
-      <div class="card-label">{{ i18n.t('settings.inviteCode') }}</div>
-      <p class="card-hint">{{ i18n.t('settings.inviteCodeHint') }}</p>
-      <div class="invite-row">
-        <span class="invite-code" [class.blurred]="!codeVisible()">
-          {{ codeVisible() ? clubService.club()?.inviteCode : '••••••' }}
-        </span>
-        <button class="btn-icon-sm" (click)="codeVisible.set(!codeVisible())" [title]="codeVisible() ? i18n.t('settings.hide') : i18n.t('settings.show')">
-          <ion-icon [name]="codeVisible() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-        </button>
-        <button class="btn-icon-sm" (click)="copyCode()" [title]="i18n.t('settings.copy')">
-          <ion-icon name="copy-outline"></ion-icon>
-        </button>
-      </div>
-      @if (isOwner) {
+  @if (isAdmin) {
+    <div class="card">
+      <div class="card-section">
+        <div class="card-label">{{ i18n.t('settings.inviteCode') }}</div>
+        <p class="card-hint">{{ i18n.t('settings.inviteCodeHint') }}</p>
+        <div class="invite-row">
+          <span class="invite-code" [class.blurred]="!codeVisible()">
+            {{ codeVisible() ? clubService.club()?.inviteCode : '••••••' }}
+          </span>
+          <button class="btn-icon-sm" (click)="codeVisible.set(!codeVisible())" [title]="codeVisible() ? i18n.t('settings.hide') : i18n.t('settings.show')">
+            <ion-icon [name]="codeVisible() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </button>
+          <button class="btn-icon-sm" (click)="copyCode()" [title]="i18n.t('settings.copy')">
+            <ion-icon name="copy-outline"></ion-icon>
+          </button>
+        </div>
         <button class="btn-ghost-full" (click)="regenerateCode()" [disabled]="regenerating()">
           <ion-icon name="refresh-outline"></ion-icon>
           @if (regenerating()) { {{ i18n.t('settings.regenerating') }} } @else { {{ i18n.t('settings.regenerate') }} }
         </button>
-      }
+      </div>
     </div>
-  </div>
+  }
 
   <div class="card">
     <div class="card-section">
@@ -62,11 +62,20 @@
               <span class="manager-name">{{ m.name }}</span>
               <span class="manager-email">{{ m.email }}</span>
             </div>
-            <span class="role-badge" [class.owner]="m.role === 'owner'">{{ i18n.t('settings.role_' + m.role) }}</span>
-            @if (isOwner && m.uid !== auth.uid && m.role !== 'owner') {
-              <button class="btn-icon-sm btn-icon-danger" (click)="confirmRemoveUid.set(m.uid)" [title]="i18n.t('settings.remove')">
-                <ion-icon name="remove-circle-outline"></ion-icon>
-              </button>
+            <span class="role-badge" [class.admin]="m.role === 'admin' || m.role === 'owner'">
+              {{ i18n.t('settings.role_' + (m.role === 'owner' ? 'admin' : m.role)) }}
+            </span>
+            @if (isAdmin && m.uid !== auth.uid) {
+              @if (m.role === 'manager') {
+                <button class="btn-icon-sm" (click)="confirmPromoteUid.set(m.uid)" [title]="i18n.t('settings.promoteToAdmin')">
+                  <ion-icon name="shield-checkmark-outline"></ion-icon>
+                </button>
+              }
+              @if (m.role !== 'admin' && m.role !== 'owner') {
+                <button class="btn-icon-sm btn-icon-danger" (click)="confirmRemoveUid.set(m.uid)" [title]="i18n.t('settings.remove')">
+                  <ion-icon name="remove-circle-outline"></ion-icon>
+                </button>
+              }
             }
           </div>
         }
@@ -99,6 +108,25 @@
       <div class="modal-footer">
         <button class="btn-ghost" (click)="confirmRemoveUid.set(null)">{{ i18n.t('settings.cancel') }}</button>
         <button class="btn-danger" (click)="removeManager(confirmRemoveUid()!)">{{ i18n.t('settings.confirmRemove') }}</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (confirmPromoteUid()) {
+  <div class="modal-backdrop" (click)="confirmPromoteUid.set(null)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ i18n.t('settings.promoteTitle') }}</h3>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); margin: 0;">
+          {{ i18n.t('settings.promoteConfirm') }}
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="confirmPromoteUid.set(null)">{{ i18n.t('settings.cancel') }}</button>
+        <button class="btn-primary" (click)="promoteToAdmin(confirmPromoteUid()!)">{{ i18n.t('settings.confirmPromote') }}</button>
       </div>
     </div>
   </div>

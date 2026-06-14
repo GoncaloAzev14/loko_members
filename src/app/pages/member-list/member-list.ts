@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MemberService } from '../../services/member.service';
 import { DuesService } from '../../services/dues.service';
+import { ClubService } from '../../services/club.service';
 import { Member, Due } from '../../models/models';
 import { I18nService } from '../../services/i18n.service';
 
@@ -17,6 +18,7 @@ import { I18nService } from '../../services/i18n.service';
 export class MemberListComponent {
   private memberService = inject(MemberService);
   private duesService = inject(DuesService);
+  clubService = inject(ClubService);
   i18n = inject(I18nService);
 
   members = toSignal(this.memberService.getAll(), { initialValue: [] as Member[] });

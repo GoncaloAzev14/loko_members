@@ -1,0 +1,67 @@
+<div class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <ion-icon name="people-circle-outline"></ion-icon>
+    </div>
+
+    @if (mode() === 'choose') {
+      <h1 class="auth-title">Welcome!</h1>
+      <p class="auth-subtitle">How would you like to get started?</p>
+      <div class="choice-grid">
+        <button class="choice-btn" (click)="mode.set('create')">
+          <ion-icon name="add-circle-outline"></ion-icon>
+          <span>Create a club</span>
+          <small>Start fresh with a new workspace</small>
+        </button>
+        <button class="choice-btn" (click)="mode.set('join')">
+          <ion-icon name="enter-outline"></ion-icon>
+          <span>Join a club</span>
+          <small>Enter an invite code</small>
+        </button>
+      </div>
+    }
+
+    @if (mode() === 'create') {
+      <h1 class="auth-title">Create a Club</h1>
+      <p class="auth-subtitle">Give your club a name to get started</p>
+      <div class="auth-form">
+        <div class="form-group">
+          <label>Club Name</label>
+          <input type="text" [(ngModel)]="clubName" name="clubName" placeholder="e.g. FC Lokomotiv" />
+        </div>
+        @if (error()) { <p class="error-msg">{{ error() }}</p> }
+        <button class="btn-primary" (click)="createClub()" [disabled]="loading() || !clubName.trim()">
+          @if (loading()) { Creating… } @else { Create Club }
+        </button>
+        <button class="btn-ghost" (click)="mode.set('choose')">Back</button>
+      </div>
+    }
+
+    @if (mode() === 'join') {
+      <h1 class="auth-title">Join a Club</h1>
+      <p class="auth-subtitle">Enter the invite code shared by your team</p>
+      <div class="auth-form">
+        <div class="form-group">
+          <label>Invite Code</label>
+          <input
+            type="text"
+            [(ngModel)]="inviteCode"
+            name="inviteCode"
+            placeholder="e.g. AB12CD"
+            autocomplete="off"
+            style="text-transform: uppercase; letter-spacing: 0.15em;"
+          />
+        </div>
+        @if (error()) { <p class="error-msg">{{ error() }}</p> }
+        <button class="btn-primary" (click)="joinClub()" [disabled]="loading() || !inviteCode.trim()">
+          @if (loading()) { Joining… } @else { Join Club }
+        </button>
+        <button class="btn-ghost" (click)="mode.set('choose')">Back</button>
+      </div>
+    }
+
+    <p class="auth-footer">
+      Wrong account? <a href="#" (click)="$event.preventDefault(); signOut()">Sign out</a>
+    </p>
+  </div>
+</div>

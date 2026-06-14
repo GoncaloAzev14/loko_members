@@ -1,0 +1,51 @@
+<div class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <ion-icon name="people-circle-outline"></ion-icon>
+    </div>
+    <h1 class="auth-title">Loko Members</h1>
+    <p class="auth-subtitle">Sign in to manage your club</p>
+
+    <form (ngSubmit)="onSubmit()" #f="ngForm" class="auth-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          placeholder="your@email.com"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+      </div>
+
+      @if (error()) {
+        <p class="error-msg">{{ error() }}</p>
+      }
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        @if (loading()) {
+          <span>Signing in…</span>
+        } @else {
+          <span>Sign In</span>
+        }
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      No account? <a routerLink="/signup">Create one</a>
+    </p>
+  </div>
+</div>

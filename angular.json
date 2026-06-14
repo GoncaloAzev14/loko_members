@@ -56,7 +56,11 @@
               "outputMode": "static",
               "outputHashing": "all",
               "serviceWorker": "ngsw-config.json",
-              "inlineCriticalCss": false,
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "budgets": [
                 {
                   "type": "initial",

@@ -1,8 +1,8 @@
 import { Component, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
+  i18n = inject(I18nService);
 
   email = '';
   password = '';
@@ -27,7 +28,7 @@ export class LoginComponent {
       await this.auth.signIn(this.email, this.password);
       await this.router.navigate(['/']);
     } catch {
-      this.error.set('Invalid email or password.');
+      this.error.set(this.i18n.t('login.errorInvalid'));
     } finally {
       this.loading.set(false);
     }

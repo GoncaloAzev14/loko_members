@@ -1,7 +1,7 @@
 <div class="page">
   <button class="back-btn" (click)="goBack()">
     <ion-icon name="arrow-back-outline"></ion-icon>
-    Members
+    {{ i18n.t('memberDetail.backToMembers') }}
   </button>
 
   @if (member(); as m) {
@@ -15,35 +15,35 @@
           @if (m.notes) { <span class="hero-notes">{{ m.notes }}</span> }
         </div>
         <div class="hero-actions">
-          <button class="btn-icon" (click)="startEdit()" title="Edit">
+          <button class="btn-icon" (click)="startEdit()" [title]="i18n.t('memberDetail.edit')">
             <ion-icon name="pencil-outline"></ion-icon>
           </button>
-          <button class="btn-icon" [class.btn-icon--danger]="m.active" (click)="toggleActive()" [title]="m.active ? 'Deactivate' : 'Reactivate'">
+          <button class="btn-icon" [class.btn-icon--danger]="m.active" (click)="toggleActive()" [title]="m.active ? i18n.t('memberDetail.deactivate') : i18n.t('memberDetail.reactivate')">
             <ion-icon [name]="m.active ? 'person-remove-outline' : 'person-add-outline'"></ion-icon>
           </button>
         </div>
       } @else {
         <div class="edit-form">
           <div class="form-group">
-            <label>Name *</label>
+            <label>{{ i18n.t('memberDetail.name') }}</label>
             <input type="text" [(ngModel)]="editName" />
           </div>
           <div class="form-group">
-            <label>Phone</label>
+            <label>{{ i18n.t('memberDetail.phone') }}</label>
             <input type="tel" [(ngModel)]="editPhone" />
           </div>
           <div class="form-group">
-            <label>Email</label>
+            <label>{{ i18n.t('memberDetail.email') }}</label>
             <input type="email" [(ngModel)]="editEmail" />
           </div>
           <div class="form-group">
-            <label>Notes</label>
+            <label>{{ i18n.t('memberDetail.notes') }}</label>
             <textarea [(ngModel)]="editNotes" rows="2"></textarea>
           </div>
           <div class="edit-actions">
-            <button class="btn-ghost" (click)="editing.set(false)">Cancel</button>
+            <button class="btn-ghost" (click)="editing.set(false)">{{ i18n.t('memberDetail.cancel') }}</button>
             <button class="btn-primary" (click)="saveEdit()" [disabled]="editLoading() || !editName.trim()">
-              @if (editLoading()) { Saving… } @else { Save }
+              @if (editLoading()) { {{ i18n.t('memberDetail.saving') }} } @else { {{ i18n.t('memberDetail.save') }} }
             </button>
           </div>
         </div>
@@ -52,14 +52,14 @@
 
     <div class="section">
       <div class="section-header">
-        <h3>Unpaid Dues <span class="count">{{ unpaidDues().length }}</span></h3>
+        <h3>{{ i18n.t('memberDetail.unpaidDues') }} <span class="count">{{ unpaidDues().length }}</span></h3>
         <button class="btn-add" (click)="openAddDue()">
-          <ion-icon name="add-outline"></ion-icon> Add Due
+          <ion-icon name="add-outline"></ion-icon> {{ i18n.t('memberDetail.addDue') }}
         </button>
       </div>
 
       @if (unpaidDues().length === 0) {
-        <div class="empty-small">No pending dues</div>
+        <div class="empty-small">{{ i18n.t('memberDetail.noPendingDues') }}</div>
       } @else {
         <div class="due-list">
           @for (due of unpaidDues(); track due.id) {
@@ -73,10 +73,10 @@
               </div>
               <span class="due-amount">{{ formatCurrency(due.amount) }}</span>
               <div class="due-actions">
-                <button class="btn-paid" (click)="markPaid(due.id)" title="Mark as paid">
+                <button class="btn-paid" (click)="markPaid(due.id)" [title]="i18n.t('memberDetail.markPaid')">
                   <ion-icon name="checkmark-outline"></ion-icon>
                 </button>
-                <button class="btn-delete" (click)="confirmDeleteId.set(due.id)" title="Delete">
+                <button class="btn-delete" (click)="confirmDeleteId.set(due.id)" [title]="i18n.t('memberDetail.delete')">
                   <ion-icon name="trash-outline"></ion-icon>
                 </button>
               </div>
@@ -88,10 +88,10 @@
 
     <div class="section">
       <div class="section-header">
-        <h3>Paid Dues <span class="count">{{ paidDues().length }}</span></h3>
+        <h3>{{ i18n.t('memberDetail.paidDues') }} <span class="count">{{ paidDues().length }}</span></h3>
       </div>
       @if (paidDues().length === 0) {
-        <div class="empty-small">No paid dues yet</div>
+        <div class="empty-small">{{ i18n.t('memberDetail.noPaidDues') }}</div>
       } @else {
         <div class="due-list">
           @for (due of paidDues(); track due.id) {
@@ -100,12 +100,12 @@
                 <span class="due-desc">{{ due.description }}</span>
                 <span class="due-date paid">
                   <ion-icon name="checkmark-circle-outline"></ion-icon>
-                  Paid {{ formatDate(due.paidAt!) }}
+                  {{ i18n.t('memberDetail.paidOn', { date: formatDate(due.paidAt!) }) }}
                 </span>
               </div>
               <span class="due-amount paid">{{ formatCurrency(due.amount) }}</span>
               <div class="due-actions">
-                <button class="btn-icon-sm" (click)="markUnpaid(due.id)" title="Mark as unpaid">
+                <button class="btn-icon-sm" (click)="markUnpaid(due.id)" [title]="i18n.t('memberDetail.markUnpaid')">
                   <ion-icon name="refresh-outline"></ion-icon>
                 </button>
               </div>
@@ -117,7 +117,7 @@
   } @else {
     <div class="empty-state">
       <ion-icon name="person-outline"></ion-icon>
-      <p>Member not found</p>
+      <p>{{ i18n.t('memberDetail.notFound') }}</p>
     </div>
   }
 </div>
@@ -126,30 +126,30 @@
   <div class="modal-backdrop" (click)="showAddDue.set(false)">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Add Due</h3>
+        <h3>{{ i18n.t('memberDetail.addDueTitle') }}</h3>
         <button class="modal-close" (click)="showAddDue.set(false)">
           <ion-icon name="close-outline"></ion-icon>
         </button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Description *</label>
-          <input type="text" [(ngModel)]="dueDesc" placeholder="e.g. Monthly fee – Jan 2025" />
+          <label>{{ i18n.t('memberDetail.descLabel') }}</label>
+          <input type="text" [(ngModel)]="dueDesc" [placeholder]="i18n.t('memberDetail.descPlaceholder')" />
         </div>
         <div class="form-group">
-          <label>Amount (€) *</label>
-          <input type="number" [(ngModel)]="dueAmount" placeholder="0.00" min="0" step="0.01" />
+          <label>{{ i18n.t('memberDetail.amountLabel') }}</label>
+          <input type="number" [(ngModel)]="dueAmount" [placeholder]="i18n.t('memberDetail.amountPlaceholder')" min="0" step="0.01" />
         </div>
         <div class="form-group">
-          <label>Due Date *</label>
+          <label>{{ i18n.t('memberDetail.dueDateLabel') }}</label>
           <input type="date" [(ngModel)]="dueDateStr" />
         </div>
         @if (addDueError()) { <p class="error-msg">{{ addDueError() }}</p> }
       </div>
       <div class="modal-footer">
-        <button class="btn-ghost" (click)="showAddDue.set(false)">Cancel</button>
+        <button class="btn-ghost" (click)="showAddDue.set(false)">{{ i18n.t('memberDetail.cancel') }}</button>
         <button class="btn-primary" (click)="addDue()" [disabled]="addDueLoading()">
-          @if (addDueLoading()) { Adding… } @else { Add Due }
+          @if (addDueLoading()) { {{ i18n.t('memberDetail.adding') }} } @else { {{ i18n.t('memberDetail.addDueBtn') }} }
         </button>
       </div>
     </div>
@@ -160,14 +160,14 @@
   <div class="modal-backdrop" (click)="confirmDeleteId.set(null)">
     <div class="modal modal--sm" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Delete Due?</h3>
+        <h3>{{ i18n.t('memberDetail.deleteDueTitle') }}</h3>
       </div>
       <div class="modal-body">
-        <p style="color: var(--text-secondary); margin: 0;">This action cannot be undone.</p>
+        <p style="color: var(--text-secondary); margin: 0;">{{ i18n.t('memberDetail.deleteDueConfirm') }}</p>
       </div>
       <div class="modal-footer">
-        <button class="btn-ghost" (click)="confirmDeleteId.set(null)">Cancel</button>
-        <button class="btn-danger" (click)="deleteDue(confirmDeleteId()!)">Delete</button>
+        <button class="btn-ghost" (click)="confirmDeleteId.set(null)">{{ i18n.t('memberDetail.cancel') }}</button>
+        <button class="btn-danger" (click)="deleteDue(confirmDeleteId()!)">{{ i18n.t('memberDetail.confirmDelete') }}</button>
       </div>
     </div>
   </div>

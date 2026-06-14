@@ -2,6 +2,7 @@ import { Component, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -13,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 export class SignUpComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
+  i18n = inject(I18nService);
 
   name = '';
   email = '';
@@ -23,7 +25,7 @@ export class SignUpComponent {
   async onSubmit() {
     this.error.set('');
     if (this.password.length < 6) {
-      this.error.set('Password must be at least 6 characters.');
+      this.error.set(this.i18n.t('signup.errorShortPassword'));
       return;
     }
     this.loading.set(true);
@@ -33,9 +35,9 @@ export class SignUpComponent {
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : '';
       if (msg.includes('email-already-in-use')) {
-        this.error.set('This email is already registered.');
+        this.error.set(this.i18n.t('signup.errorEmailTaken'));
       } else {
-        this.error.set('Could not create account. Try again.');
+        this.error.set(this.i18n.t('signup.errorFailed'));
       }
     } finally {
       this.loading.set(false);

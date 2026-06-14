@@ -222,6 +222,11 @@
   }
 }
 
+.lang-switch {
+  display: flex;
+  gap: 0.5rem;
+}
+
 // Modal
 .modal-backdrop {
   position: fixed;

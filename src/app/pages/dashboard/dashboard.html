@@ -1,6 +1,6 @@
 <div class="page">
   <div class="page-header">
-    <h2>Dashboard</h2>
+    <h2>{{ i18n.t('dashboard.title') }}</h2>
   </div>
 
   <div class="stats-grid">
@@ -8,7 +8,7 @@
       <ion-icon name="people-outline"></ion-icon>
       <div class="stat-body">
         <span class="stat-value">{{ activeMembers().length }}</span>
-        <span class="stat-label">Active Members</span>
+        <span class="stat-label">{{ i18n.t('dashboard.activeMembers') }}</span>
       </div>
     </div>
 
@@ -16,7 +16,7 @@
       <ion-icon name="receipt-outline"></ion-icon>
       <div class="stat-body">
         <span class="stat-value">{{ unpaidDues().length }}</span>
-        <span class="stat-label">Unpaid Dues</span>
+        <span class="stat-label">{{ i18n.t('dashboard.unpaidDues') }}</span>
       </div>
     </div>
 
@@ -24,7 +24,7 @@
       <ion-icon name="cash-outline"></ion-icon>
       <div class="stat-body">
         <span class="stat-value">{{ formatCurrency(totalUnpaid()) }}</span>
-        <span class="stat-label">Total Owed</span>
+        <span class="stat-label">{{ i18n.t('dashboard.totalOwed') }}</span>
       </div>
     </div>
   </div>
@@ -32,13 +32,13 @@
   <div class="section">
     <h3 class="section-title">
       <ion-icon name="warning-outline"></ion-icon>
-      Most Overdue
+      {{ i18n.t('dashboard.mostOverdue') }}
     </h3>
 
     @if (overdueDues().length === 0) {
       <div class="empty-state">
         <ion-icon name="checkmark-circle-outline"></ion-icon>
-        <p>No overdue payments</p>
+        <p>{{ i18n.t('dashboard.noOverdue') }}</p>
       </div>
     } @else {
       <div class="due-list">

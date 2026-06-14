@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ClubService } from '../../services/club.service';
 import { AuthService } from '../../services/auth.service';
 import { Manager } from '../../models/models';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-settings',
@@ -14,6 +15,7 @@ import { Manager } from '../../models/models';
 export class SettingsComponent implements OnInit {
   clubService = inject(ClubService);
   auth = inject(AuthService);
+  i18n = inject(I18nService);
 
   managers = signal<Manager[]>([]);
   editingName = signal(false);

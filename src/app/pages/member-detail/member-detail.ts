@@ -7,6 +7,7 @@ import { DuesService } from '../../services/dues.service';
 import { Member, Due } from '../../models/models';
 import { Timestamp } from '@angular/fire/firestore';
 import { map } from 'rxjs';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -20,6 +21,7 @@ export class MemberDetailComponent implements OnInit {
   private router = inject(Router);
   private memberService = inject(MemberService);
   private duesService = inject(DuesService);
+  i18n = inject(I18nService);
 
   memberId = this.route.snapshot.paramMap.get('id')!;
 
@@ -114,7 +116,7 @@ export class MemberDetailComponent implements OnInit {
   async addDue() {
     const amount = parseFloat(this.dueAmount);
     if (!this.dueDesc.trim() || isNaN(amount) || !this.dueDateStr) {
-      this.addDueError.set('Please fill in all fields.');
+      this.addDueError.set(this.i18n.t('memberDetail.errorFillFields'));
       return;
     }
     this.addDueLoading.set(true);
@@ -128,7 +130,7 @@ export class MemberDetailComponent implements OnInit {
       });
       this.showAddDue.set(false);
     } catch {
-      this.addDueError.set('Could not add due. Try again.');
+      this.addDueError.set(this.i18n.t('memberDetail.errorAddDue'));
     } finally {
       this.addDueLoading.set(false);
     }

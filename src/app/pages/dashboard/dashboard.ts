@@ -5,6 +5,7 @@ import { MemberService } from '../../services/member.service';
 import { DuesService } from '../../services/dues.service';
 import { Due, Member } from '../../models/models';
 import { Timestamp } from '@angular/fire/firestore';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ import { Timestamp } from '@angular/fire/firestore';
 export class DashboardComponent {
   private memberService = inject(MemberService);
   private duesService = inject(DuesService);
+  i18n = inject(I18nService);
 
   members = toSignal(this.memberService.getAll(), { initialValue: [] as Member[] });
   dues = toSignal(this.duesService.getAll(), { initialValue: [] as Due[] });

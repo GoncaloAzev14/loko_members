@@ -5,63 +5,63 @@
     </div>
 
     @if (mode() === 'choose') {
-      <h1 class="auth-title">Welcome!</h1>
-      <p class="auth-subtitle">How would you like to get started?</p>
+      <h1 class="auth-title">{{ i18n.t('join.welcome') }}</h1>
+      <p class="auth-subtitle">{{ i18n.t('join.subtitle') }}</p>
       <div class="choice-grid">
         <button class="choice-btn" (click)="mode.set('create')">
           <ion-icon name="add-circle-outline"></ion-icon>
-          <span>Create a club</span>
-          <small>Start fresh with a new workspace</small>
+          <span>{{ i18n.t('join.createOption') }}</span>
+          <small>{{ i18n.t('join.createOptionSub') }}</small>
         </button>
         <button class="choice-btn" (click)="mode.set('join')">
           <ion-icon name="enter-outline"></ion-icon>
-          <span>Join a club</span>
-          <small>Enter an invite code</small>
+          <span>{{ i18n.t('join.joinOption') }}</span>
+          <small>{{ i18n.t('join.joinOptionSub') }}</small>
         </button>
       </div>
     }
 
     @if (mode() === 'create') {
-      <h1 class="auth-title">Create a Club</h1>
-      <p class="auth-subtitle">Give your club a name to get started</p>
+      <h1 class="auth-title">{{ i18n.t('join.createTitle') }}</h1>
+      <p class="auth-subtitle">{{ i18n.t('join.createSubtitle') }}</p>
       <div class="auth-form">
         <div class="form-group">
-          <label>Club Name</label>
-          <input type="text" [(ngModel)]="clubName" name="clubName" placeholder="e.g. FC Lokomotiv" />
+          <label>{{ i18n.t('join.clubName') }}</label>
+          <input type="text" [(ngModel)]="clubName" name="clubName" [placeholder]="i18n.t('join.clubNamePlaceholder')" />
         </div>
         @if (error()) { <p class="error-msg">{{ error() }}</p> }
         <button class="btn-primary" (click)="createClub()" [disabled]="loading() || !clubName.trim()">
-          @if (loading()) { Creating… } @else { Create Club }
+          @if (loading()) { {{ i18n.t('join.creating') }} } @else { {{ i18n.t('join.createBtn') }} }
         </button>
-        <button class="btn-ghost" (click)="mode.set('choose')">Back</button>
+        <button class="btn-ghost" (click)="mode.set('choose')">{{ i18n.t('join.back') }}</button>
       </div>
     }
 
     @if (mode() === 'join') {
-      <h1 class="auth-title">Join a Club</h1>
-      <p class="auth-subtitle">Enter the invite code shared by your team</p>
+      <h1 class="auth-title">{{ i18n.t('join.joinTitle') }}</h1>
+      <p class="auth-subtitle">{{ i18n.t('join.joinSubtitle') }}</p>
       <div class="auth-form">
         <div class="form-group">
-          <label>Invite Code</label>
+          <label>{{ i18n.t('join.inviteCode') }}</label>
           <input
             type="text"
             [(ngModel)]="inviteCode"
             name="inviteCode"
-            placeholder="e.g. AB12CD"
+            [placeholder]="i18n.t('join.inviteCodePlaceholder')"
             autocomplete="off"
             style="text-transform: uppercase; letter-spacing: 0.15em;"
           />
         </div>
         @if (error()) { <p class="error-msg">{{ error() }}</p> }
         <button class="btn-primary" (click)="joinClub()" [disabled]="loading() || !inviteCode.trim()">
-          @if (loading()) { Joining… } @else { Join Club }
+          @if (loading()) { {{ i18n.t('join.joining') }} } @else { {{ i18n.t('join.joinBtn') }} }
         </button>
-        <button class="btn-ghost" (click)="mode.set('choose')">Back</button>
+        <button class="btn-ghost" (click)="mode.set('choose')">{{ i18n.t('join.back') }}</button>
       </div>
     }
 
     <p class="auth-footer">
-      Wrong account? <a href="#" (click)="$event.preventDefault(); signOut()">Sign out</a>
+      <a href="#" (click)="$event.preventDefault(); signOut()">{{ i18n.t('join.signOut') }}</a>
     </p>
   </div>
 </div>

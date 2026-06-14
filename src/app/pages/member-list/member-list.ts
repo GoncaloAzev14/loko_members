@@ -1,15 +1,15 @@
 import { Component, inject, signal, computed, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TitleCasePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MemberService } from '../../services/member.service';
 import { DuesService } from '../../services/dues.service';
 import { Member, Due } from '../../models/models';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-member-list',
-  imports: [FormsModule, RouterLink, TitleCasePipe],
+  imports: [FormsModule, RouterLink],
   templateUrl: './member-list.html',
   styleUrl: './member-list.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -17,6 +17,7 @@ import { Member, Due } from '../../models/models';
 export class MemberListComponent {
   private memberService = inject(MemberService);
   private duesService = inject(DuesService);
+  i18n = inject(I18nService);
 
   members = toSignal(this.memberService.getAll(), { initialValue: [] as Member[] });
   dues = toSignal(this.duesService.getAll(), { initialValue: [] as Due[] });

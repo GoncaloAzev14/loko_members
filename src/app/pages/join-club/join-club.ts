@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClubService } from '../../services/club.service';
 import { AuthService } from '../../services/auth.service';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-join-club',
@@ -15,6 +16,7 @@ export class JoinClubComponent {
   private clubService = inject(ClubService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  i18n = inject(I18nService);
 
   mode = signal<'choose' | 'create' | 'join'>('choose');
   clubName = '';
@@ -31,7 +33,7 @@ export class JoinClubComponent {
       await this.router.navigate(['/']);
     } catch (err) {
       console.error('[JoinClub] createClub failed:', err);
-      this.error.set('Could not create club. Try again.');
+      this.error.set(this.i18n.t('join.errorCreate'));
     } finally {
       this.loading.set(false);
     }
@@ -46,11 +48,11 @@ export class JoinClubComponent {
       if (ok) {
         await this.router.navigate(['/']);
       } else {
-        this.error.set('Invite code not found. Double-check and try again.');
+        this.error.set(this.i18n.t('join.errorCodeNotFound'));
       }
     } catch (err) {
       console.error('[JoinClub] joinClub failed:', err);
-      this.error.set('Could not join. Try again.');
+      this.error.set(this.i18n.t('join.errorJoin'));
     } finally {
       this.loading.set(false);
     }

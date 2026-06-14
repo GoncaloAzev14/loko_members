@@ -3,30 +3,30 @@
     <div class="auth-logo">
       <ion-icon name="people-circle-outline"></ion-icon>
     </div>
-    <h1 class="auth-title">Loko Members</h1>
-    <p class="auth-subtitle">Sign in to manage your club</p>
+    <h1 class="auth-title">{{ i18n.t('login.title') }}</h1>
+    <p class="auth-subtitle">{{ i18n.t('login.subtitle') }}</p>
 
     <form (ngSubmit)="onSubmit()" #f="ngForm" class="auth-form">
       <div class="form-group">
-        <label>Email</label>
+        <label>{{ i18n.t('login.email') }}</label>
         <input
           type="email"
           [(ngModel)]="email"
           name="email"
           required
-          placeholder="your@email.com"
+          [placeholder]="i18n.t('login.emailPlaceholder')"
           autocomplete="email"
         />
       </div>
 
       <div class="form-group">
-        <label>Password</label>
+        <label>{{ i18n.t('login.password') }}</label>
         <input
           type="password"
           [(ngModel)]="password"
           name="password"
           required
-          placeholder="••••••••"
+          [placeholder]="i18n.t('login.passwordPlaceholder')"
           autocomplete="current-password"
         />
       </div>
@@ -37,15 +37,15 @@
 
       <button type="submit" class="btn-primary" [disabled]="loading()">
         @if (loading()) {
-          <span>Signing in…</span>
+          <span>{{ i18n.t('login.submitting') }}</span>
         } @else {
-          <span>Sign In</span>
+          <span>{{ i18n.t('login.submit') }}</span>
         }
       </button>
     </form>
 
     <p class="auth-footer">
-      No account? <a routerLink="/signup">Create one</a>
+      {{ i18n.t('login.noAccount').split('?')[0] }}? <a routerLink="/signup">{{ i18n.t('login.noAccount').split('? ')[1] }}</a>
     </p>
   </div>
 </div>

@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   User,
   updateProfile,
+  reload,
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
@@ -25,9 +26,24 @@ export class AuthService {
     });
   }
 
+  /** Resolves once the initial auth state has been determined. */
+  waitUntilReady(): Promise<void> {
+    if (!this.loading()) return Promise.resolve();
+    return new Promise((resolve) => {
+      const unsub = onAuthStateChanged(this.auth, () => {
+        unsub();
+        resolve();
+      });
+    });
+  }
+
   async signUp(email: string, password: string, displayName: string): Promise<void> {
     const cred = await createUserWithEmailAndPassword(this.auth, email, password);
     await updateProfile(cred.user, { displayName });
+    // onAuthStateChanged fires before updateProfile, so the signal has a stale
+    // user without displayName — update it manually after the profile write.
+    await reload(cred.user);
+    this.currentUser.set(cred.user);
   }
 
   async signIn(email: string, password: string): Promise<void> {

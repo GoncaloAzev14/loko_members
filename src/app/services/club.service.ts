@@ -43,8 +43,12 @@ export class ClubService {
   }
 
   async createClub(name: string): Promise<void> {
-    const uid = this.auth.uid!;
-    const user = this.auth.currentUser()!;
+    const uid = this.auth.uid;
+    const user = this.auth.currentUser();
+    if (!uid || !user) {
+      console.error('[ClubService] createClub called without authenticated user');
+      throw new Error('Not authenticated');
+    }
     const clubId = uuidv4();
     const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 

@@ -3,9 +3,11 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ClubService } from '../services/club.service';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  await auth.waitUntilReady();
 
   if (!auth.currentUser()) {
     return router.createUrlTree(['/login']);
@@ -13,9 +15,11 @@ export const authGuard: CanActivateFn = () => {
   return true;
 };
 
-export const publicGuard: CanActivateFn = () => {
+export const publicGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  await auth.waitUntilReady();
 
   if (auth.currentUser()) {
     return router.createUrlTree(['/']);
@@ -23,10 +27,12 @@ export const publicGuard: CanActivateFn = () => {
   return true;
 };
 
-export const clubGuard: CanActivateFn = () => {
+export const clubGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const club = inject(ClubService);
   const router = inject(Router);
+
+  await auth.waitUntilReady();
 
   if (!auth.currentUser()) {
     return router.createUrlTree(['/login']);

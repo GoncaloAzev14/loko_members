@@ -29,7 +29,8 @@ export class JoinClubComponent {
     try {
       await this.clubService.createClub(this.clubName.trim());
       await this.router.navigate(['/']);
-    } catch {
+    } catch (err) {
+      console.error('[JoinClub] createClub failed:', err);
       this.error.set('Could not create club. Try again.');
     } finally {
       this.loading.set(false);
@@ -47,7 +48,8 @@ export class JoinClubComponent {
       } else {
         this.error.set('Invite code not found. Double-check and try again.');
       }
-    } catch {
+    } catch (err) {
+      console.error('[JoinClub] joinClub failed:', err);
       this.error.set('Could not join. Try again.');
     } finally {
       this.loading.set(false);

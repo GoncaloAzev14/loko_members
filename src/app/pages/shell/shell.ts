@@ -15,6 +15,8 @@ export class ShellComponent implements OnInit {
   auth = inject(AuthService);
 
   async ngOnInit() {
-    await this.clubService.loadUserClub();
+    if (!this.clubService.clubId()) {
+      await this.clubService.loadUserClub();
+    }
   }
 }

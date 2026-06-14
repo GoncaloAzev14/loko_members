@@ -37,6 +37,13 @@ export const clubGuard: CanActivateFn = async () => {
   if (!auth.currentUser()) {
     return router.createUrlTree(['/login']);
   }
+
+  // On reload the in-memory clubId signal is empty — fetch it from Firestore
+  // before deciding whether the user needs to join/create a club.
+  if (!club.clubId()) {
+    await club.loadUserClub();
+  }
+
   if (!club.clubId()) {
     return router.createUrlTree(['/join']);
   }

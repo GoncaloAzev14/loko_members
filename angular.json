@@ -52,7 +52,7 @@
               "serviceWorker": "ngsw-config.json"
             },
             "github-pages": {
-              "baseHref": "/loko-members/",
+              "baseHref": "/loko_members/",
               "outputMode": "static",
               "outputHashing": "all",
               "serviceWorker": "ngsw-config.json",

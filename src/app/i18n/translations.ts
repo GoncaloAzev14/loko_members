@@ -221,7 +221,7 @@ const pt: typeof en = {
   'shell.appName': 'Loko Members',
   'shell.clubs': 'Clubes',
   'shell.dashboard': 'Painel',
-  'shell.members': 'Membros',
+  'shell.members': 'Sócios',
   'shell.settings': 'Definições',
   'shell.joinOrCreate': 'Entrar ou criar clube',
   // clubs
@@ -231,14 +231,14 @@ const pt: typeof en = {
   'clubs.addClub': 'Adicionar outro clube',
   // dashboard
   'dashboard.title': 'Painel',
-  'dashboard.activeMembers': 'Membros ativos',
+  'dashboard.activeMembers': 'Sócios ativos',
   'dashboard.unpaidDues': 'Quotas em atraso',
   'dashboard.totalOwed': 'Total em dívida',
   'dashboard.mostOverdue': 'Mais atrasados',
   'dashboard.noOverdue': 'Sem pagamentos em atraso',
   // members list
-  'members.title': 'Membros',
-  'members.search': 'Pesquisar membros…',
+  'members.title': 'Sócios',
+  'members.search': 'Pesquisar sócios…',
   'members.noResults': 'Nenhum membro encontrado',
   'members.due': 'em dívida',
   'members.inactive': 'Inativo',
@@ -260,7 +260,7 @@ const pt: typeof en = {
   'members.filter_active': 'Ativos',
   'members.filter_inactive': 'Inativos',
   // member detail
-  'memberDetail.backToMembers': 'Membros',
+  'memberDetail.backToMembers': 'Sócios',
   'memberDetail.edit': 'Editar',
   'memberDetail.deactivate': 'Desativar',
   'memberDetail.reactivate': 'Reativar',
@@ -302,7 +302,7 @@ const pt: typeof en = {
   'settings.save': 'Guardar',
   'settings.saving': 'A guardar…',
   'settings.inviteCode': 'Código de convite',
-  'settings.inviteCodeHint': 'Partilha este código com os membros da equipa para que possam entrar.',
+  'settings.inviteCodeHint': 'Partilha este código com os sócios da equipa para que possam entrar.',
   'settings.hide': 'Ocultar',
   'settings.show': 'Mostrar',
   'settings.copy': 'Copiar',
@@ -319,7 +319,7 @@ const pt: typeof en = {
   'settings.role_manager': 'gestor',
   'settings.promoteToAdmin': 'Promover a admin',
   'settings.promoteTitle': 'Promover a admin?',
-  'settings.promoteConfirm': 'Esta pessoa poderá gerir membros e convidar outros.',
+  'settings.promoteConfirm': 'Esta pessoa poderá gerir sócios e convidar outros.',
   'settings.confirmPromote': 'Promover',
   // csv
   'csv.export': 'Exportar CSV',

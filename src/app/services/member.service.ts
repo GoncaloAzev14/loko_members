@@ -32,15 +32,21 @@ export class MemberService {
     const id = uuidv4();
     const { active = true, ...rest } = data;
     const member: Member = { id, active, joinedAt: Timestamp.now(), ...rest };
-    await setDoc(doc(this.membersCol(), id), member);
+    await setDoc(doc(this.membersCol(), id), stripUndefined(member));
     return id;
   }
 
   async update(id: string, data: Partial<Member>): Promise<void> {
-    await updateDoc(doc(this.membersCol(), id), data as Record<string, unknown>);
+    await updateDoc(doc(this.membersCol(), id), stripUndefined(data) as Record<string, unknown>);
   }
 
   async remove(id: string): Promise<void> {
     await deleteDoc(doc(this.membersCol(), id));
   }
+}
+
+function stripUndefined<T extends object>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined)
+  ) as Partial<T>;
 }

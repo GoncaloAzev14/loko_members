@@ -12,18 +12,18 @@ export const routes: Routes = [
     canActivate: [publicGuard],
     loadComponent: () => import('./pages/sign-up/sign-up').then((m) => m.SignUpComponent),
   },
-  // Legacy /join redirects to the clubs page inside the shell
   { path: 'join', redirectTo: '/clubs', pathMatch: 'full' },
+  {
+    path: 'clubs',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/clubs/clubs').then((m) => m.ClubsComponent),
+  },
   {
     path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/shell/shell').then((m) => m.ShellComponent),
     children: [
-      { path: '', redirectTo: 'clubs', pathMatch: 'full' },
-      {
-        path: 'clubs',
-        loadComponent: () => import('./pages/clubs/clubs').then((m) => m.ClubsComponent),
-      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
         canActivate: [clubGuard],
@@ -46,5 +46,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: '/clubs' },
 ];

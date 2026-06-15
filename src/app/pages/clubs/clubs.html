@@ -1,3 +1,12 @@
+<div class="clubs-layout">
+  <header class="top-bar">
+    <span class="app-name">{{ i18n.t('shell.appName') }}</span>
+    <button class="sign-out-btn" (click)="auth.signOut()" title="Sign out">
+      <ion-icon name="log-out-outline"></ion-icon>
+    </button>
+  </header>
+
+  <main class="page-content">
 <div class="page">
   <div class="page-header">
     <h2>{{ i18n.t('clubs.title') }}</h2>
@@ -82,4 +91,6 @@
       </button>
     </div>
   }
+</div>
+  </main>
 </div>

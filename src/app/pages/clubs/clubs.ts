@@ -2,6 +2,7 @@ import { Component, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClubService } from '../../services/club.service';
+import { AuthService } from '../../services/auth.service';
 import { I18nService } from '../../services/i18n.service';
 
 @Component({
@@ -13,6 +14,7 @@ import { I18nService } from '../../services/i18n.service';
 })
 export class ClubsComponent {
   clubService = inject(ClubService);
+  auth = inject(AuthService);
   private router = inject(Router);
   i18n = inject(I18nService);
 

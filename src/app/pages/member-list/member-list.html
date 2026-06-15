@@ -1,6 +1,15 @@
 <div class="page">
   <div class="page-header">
     <h2>{{ i18n.t('members.title') }}</h2>
+    <div class="header-actions">
+      <button class="btn-icon-sm" (click)="exportCsv()" [title]="i18n.t('csv.export')">
+        <ion-icon name="download-outline"></ion-icon>
+      </button>
+      <button class="btn-icon-sm" (click)="fileInput.click()" [title]="i18n.t('csv.import')">
+        <ion-icon name="upload-outline"></ion-icon>
+      </button>
+      <input #fileInput type="file" accept=".csv" style="display:none" (change)="handleFileImport($event)" />
+    </div>
   </div>
 
   <div class="toolbar">
@@ -91,6 +100,68 @@
         <button class="btn-primary" (click)="addMember()" [disabled]="addLoading() || !newName.trim()">
           @if (addLoading()) { {{ i18n.t('members.adding') }} } @else { {{ i18n.t('members.add') }} }
         </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (importPreview()) {
+  <div class="modal-backdrop" (click)="importPreview.set(null)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ i18n.t('csv.previewTitle') }}</h3>
+        <button class="modal-close" (click)="importPreview.set(null)">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (!importHasChanges && !importPreview()!.parseErrors.length) {
+          <p class="import-none">{{ i18n.t('csv.noChanges') }}</p>
+        } @else {
+          <div class="import-summary">
+            @if (importPreview()!.membersToCreate.length) {
+              <div class="import-row">
+                <ion-icon name="person-add-outline" class="import-icon new"></ion-icon>
+                <span>{{ i18n.t('csv.newMembers', { count: '' + importPreview()!.membersToCreate.length }) }}</span>
+              </div>
+            }
+            @if (importPreview()!.membersToUpdate.length) {
+              <div class="import-row">
+                <ion-icon name="pencil-outline" class="import-icon update"></ion-icon>
+                <span>{{ i18n.t('csv.updateMembers', { count: '' + importPreview()!.membersToUpdate.length }) }}</span>
+              </div>
+            }
+            @if (importPreview()!.duesToCreate.length) {
+              <div class="import-row">
+                <ion-icon name="add-circle-outline" class="import-icon new"></ion-icon>
+                <span>{{ i18n.t('csv.newDues', { count: '' + importPreview()!.duesToCreate.length }) }}</span>
+              </div>
+            }
+            @if (importPreview()!.duesToUpdate.length) {
+              <div class="import-row">
+                <ion-icon name="refresh-outline" class="import-icon update"></ion-icon>
+                <span>{{ i18n.t('csv.updateDues', { count: '' + importPreview()!.duesToUpdate.length }) }}</span>
+              </div>
+            }
+          </div>
+          @if (importPreview()!.parseErrors.length) {
+            <div class="import-warnings">
+              <p class="import-warn-label">{{ i18n.t('csv.parseWarnings') }}</p>
+              @for (e of importPreview()!.parseErrors; track e) {
+                <p class="import-warn-item">{{ e }}</p>
+              }
+            </div>
+          }
+        }
+        @if (importError()) { <p class="error-msg">{{ importError() }}</p> }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="importPreview.set(null)">{{ i18n.t('members.cancel') }}</button>
+        @if (importHasChanges) {
+          <button class="btn-primary" (click)="confirmImport()" [disabled]="importLoading()">
+            @if (importLoading()) { {{ i18n.t('csv.importing') }} } @else { {{ i18n.t('csv.confirmImport') }} }
+          </button>
+        }
       </div>
     </div>
   </div>

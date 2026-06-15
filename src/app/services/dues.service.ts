@@ -37,20 +37,25 @@ export class DuesService {
 
   async add(data: { memberId: string; description: string; amount: number; dueDate: Timestamp }): Promise<void> {
     const id = uuidv4();
-    const due: Due = {
-      id,
-      paid: false,
-      createdAt: Timestamp.now(),
-      ...data,
-    };
+    const due: Due = { id, paid: false, createdAt: Timestamp.now(), ...data };
     await setDoc(doc(this.duesCol(), id), due);
   }
 
-  async markPaid(id: string): Promise<void> {
-    await updateDoc(doc(this.duesCol(), id), {
-      paid: true,
-      paidAt: Timestamp.now(),
-    });
+  async addImported(data: {
+    memberId: string;
+    description: string;
+    amount: number;
+    dueDate: Timestamp;
+    paid: boolean;
+    paidAt?: Timestamp;
+  }): Promise<void> {
+    const id = uuidv4();
+    const due: Due = { id, createdAt: Timestamp.now(), ...data };
+    await setDoc(doc(this.duesCol(), id), due);
+  }
+
+  async markPaid(id: string, at?: Timestamp): Promise<void> {
+    await updateDoc(doc(this.duesCol(), id), { paid: true, paidAt: at ?? Timestamp.now() });
   }
 
   async markUnpaid(id: string): Promise<void> {

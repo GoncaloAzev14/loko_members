@@ -146,6 +146,19 @@ const en = {
   'settings.promoteTitle': 'Promote to Admin?',
   'settings.promoteConfirm': 'This person will be able to manage members and invite others.',
   'settings.confirmPromote': 'Promote',
+  // csv
+  'csv.export': 'Export CSV',
+  'csv.import': 'Import CSV',
+  'csv.previewTitle': 'Import Preview',
+  'csv.newMembers': '{{count}} new member(s) to add',
+  'csv.updateMembers': '{{count}} member(s) to update',
+  'csv.newDues': '{{count}} new due(s) to add',
+  'csv.updateDues': '{{count}} due(s) with paid status to update',
+  'csv.parseWarnings': 'Warnings',
+  'csv.noChanges': 'Nothing to import — file matches current data.',
+  'csv.confirmImport': 'Import',
+  'csv.importing': 'Importing…',
+  'csv.importError': 'Import failed. Try again.',
 };
 
 const pt: typeof en = {
@@ -294,6 +307,19 @@ const pt: typeof en = {
   'settings.promoteTitle': 'Promover a admin?',
   'settings.promoteConfirm': 'Esta pessoa poderá gerir membros e convidar outros.',
   'settings.confirmPromote': 'Promover',
+  // csv
+  'csv.export': 'Exportar CSV',
+  'csv.import': 'Importar CSV',
+  'csv.previewTitle': 'Pré-visualização da importação',
+  'csv.newMembers': '{{count}} membro(s) novo(s) a adicionar',
+  'csv.updateMembers': '{{count}} membro(s) a atualizar',
+  'csv.newDues': '{{count}} quota(s) nova(s) a adicionar',
+  'csv.updateDues': '{{count}} quota(s) com estado a atualizar',
+  'csv.parseWarnings': 'Avisos',
+  'csv.noChanges': 'Nada a importar — o ficheiro corresponde aos dados atuais.',
+  'csv.confirmImport': 'Importar',
+  'csv.importing': 'A importar…',
+  'csv.importError': 'Importação falhou. Tenta novamente.',
 };
 
 export const translations: Record<Lang, typeof en> = { en, pt };

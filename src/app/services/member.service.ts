@@ -28,15 +28,12 @@ export class MemberService {
     return collectionData(this.membersCol(), { idField: 'id' }) as Observable<Member[]>;
   }
 
-  async add(data: Omit<Member, 'id' | 'joinedAt' | 'active'>): Promise<void> {
+  async add(data: Omit<Member, 'id' | 'joinedAt' | 'active'> & { active?: boolean }): Promise<string> {
     const id = uuidv4();
-    const member: Member = {
-      id,
-      active: true,
-      joinedAt: Timestamp.now(),
-      ...data,
-    };
+    const { active = true, ...rest } = data;
+    const member: Member = { id, active, joinedAt: Timestamp.now(), ...rest };
     await setDoc(doc(this.membersCol(), id), member);
+    return id;
   }
 
   async update(id: string, data: Partial<Member>): Promise<void> {

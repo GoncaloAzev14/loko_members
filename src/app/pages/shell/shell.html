@@ -1,10 +1,31 @@
 <div class="app-layout" [class.no-nav]="!clubService.clubId()">
   <header class="top-bar">
     @if (clubService.clubId()) {
-      <a routerLink="/clubs" class="club-name">
-        {{ clubService.club()?.name }}
-        <ion-icon name="chevron-down-outline" class="club-switch-icon"></ion-icon>
-      </a>
+      <div class="club-switcher" [class.open]="dropdownOpen()">
+        <button class="club-trigger" (click)="dropdownOpen.update(v => !v)">
+          {{ clubService.club()?.name }}
+          <ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+        </button>
+        @if (dropdownOpen()) {
+          <div class="club-dropdown">
+            @for (c of clubService.clubs(); track c.id) {
+              <button class="dropdown-item" [class.active]="c.id === clubService.clubId()" (click)="selectClub(c.id)">
+                <span class="item-avatar">{{ c.name.charAt(0).toUpperCase() }}</span>
+                <span class="item-name">{{ c.name }}</span>
+                @if (c.id === clubService.clubId()) {
+                  <ion-icon name="checkmark-outline" class="check-icon"></ion-icon>
+                }
+              </button>
+            }
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item home-item" (click)="goHome()">
+              <ion-icon name="add-circle-outline" class="item-icon"></ion-icon>
+              <span class="item-name">{{ i18n.t('shell.joinOrCreate') }}</span>
+            </button>
+          </div>
+          <div class="dropdown-backdrop" (click)="dropdownOpen.set(false)"></div>
+        }
+      </div>
     } @else {
       <span class="app-name">{{ i18n.t('shell.appName') }}</span>
     }

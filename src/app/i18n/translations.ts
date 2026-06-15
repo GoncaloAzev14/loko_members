@@ -55,6 +55,7 @@ const en = {
   'shell.dashboard': 'Dashboard',
   'shell.members': 'Members',
   'shell.settings': 'Settings',
+  'shell.joinOrCreate': 'Join or create a club',
   // clubs
   'clubs.title': 'My Clubs',
   'clubs.currentClub': 'Current club',
@@ -222,6 +223,7 @@ const pt: typeof en = {
   'shell.dashboard': 'Painel',
   'shell.members': 'Membros',
   'shell.settings': 'Definições',
+  'shell.joinOrCreate': 'Entrar ou criar clube',
   // clubs
   'clubs.title': 'Os meus clubes',
   'clubs.currentClub': 'Clube atual',

@@ -131,11 +131,28 @@ export class MemberDetailComponent implements OnInit {
         dueDate: Timestamp.fromDate(new Date(this.dueDateStr)),
       });
       this.showAddDue.set(false);
-    } catch {
-      this.addDueError.set(this.i18n.t('memberDetail.errorAddDue'));
+    } catch (err) {
+      this.addDueError.set(this.parseError(err, this.i18n.t('memberDetail.errorAddDue')));
     } finally {
       this.addDueLoading.set(false);
     }
+  }
+
+  private parseError(err: unknown, fallback: string): string {
+    if (err && typeof err === 'object' && 'code' in err) {
+      const code = (err as { code: string }).code;
+      switch (code) {
+        case 'permission-denied':      return this.i18n.t('error.permissionDenied');
+        case 'unavailable':
+        case 'network-request-failed': return this.i18n.t('error.offline');
+        case 'unauthenticated':        return this.i18n.t('error.unauthenticated');
+        default: return `${fallback} [${code}]`;
+      }
+    }
+    if (err instanceof Error && err.message) {
+      return `${fallback}: ${err.message}`;
+    }
+    return fallback;
   }
 
   formatDate(ts: Timestamp): string {

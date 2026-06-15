@@ -93,11 +93,28 @@ export class MemberListComponent {
         notes: this.newNotes.trim() || undefined,
       });
       this.showAddModal.set(false);
-    } catch {
-      this.addError.set(this.i18n.t('members.errorAdd'));
+    } catch (err) {
+      this.addError.set(this.parseError(err, this.i18n.t('members.errorAdd')));
     } finally {
       this.addLoading.set(false);
     }
+  }
+
+  private parseError(err: unknown, fallback: string): string {
+    if (err && typeof err === 'object' && 'code' in err) {
+      const code = (err as { code: string }).code;
+      switch (code) {
+        case 'permission-denied':    return this.i18n.t('error.permissionDenied');
+        case 'unavailable':
+        case 'network-request-failed': return this.i18n.t('error.offline');
+        case 'unauthenticated':      return this.i18n.t('error.unauthenticated');
+        default: return `${fallback} [${code}]`;
+      }
+    }
+    if (err instanceof Error && err.message) {
+      return `${fallback}: ${err.message}`;
+    }
+    return fallback;
   }
 
   // ── CSV Export ──────────────────────────────────────────────────────────────
@@ -199,7 +216,7 @@ export class MemberListComponent {
       this.importPreview.set(null);
     } catch (err) {
       console.error('[MemberList] import failed:', err);
-      this.importError.set(this.i18n.t('csv.importError'));
+      this.importError.set(this.parseError(err, this.i18n.t('csv.importError')));
     } finally {
       this.importLoading.set(false);
     }

@@ -32,25 +32,52 @@
   <div class="section">
     <h3 class="section-title">
       <ion-icon name="warning-outline"></ion-icon>
-      {{ i18n.t('dashboard.mostOverdue') }}
+      {{ i18n.t('dashboard.debtors') }}
     </h3>
 
-    @if (overdueDues().length === 0) {
+    <div class="search-bar">
+      <ion-icon name="search-outline"></ion-icon>
+      <input
+        type="text"
+        [placeholder]="i18n.t('dashboard.searchDebtors')"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+    </div>
+
+    <div class="sort-tabs">
+      <button class="sort-tab" [class.active]="sortMode() === 'recent'" (click)="sortMode.set('recent')">
+        {{ i18n.t('dashboard.sortRecent') }}
+      </button>
+      <button class="sort-tab" [class.active]="sortMode() === 'old'" (click)="sortMode.set('old')">
+        {{ i18n.t('dashboard.sortOld') }}
+      </button>
+      <button class="sort-tab" [class.active]="sortMode() === 'name'" (click)="sortMode.set('name')">
+        {{ i18n.t('dashboard.sortName') }}
+      </button>
+    </div>
+
+    @if (filteredDebtors().length === 0) {
       <div class="empty-state">
         <ion-icon name="checkmark-circle-outline"></ion-icon>
-        <p>{{ i18n.t('dashboard.noOverdue') }}</p>
+        <p>{{ i18n.t('dashboard.noDebtors') }}</p>
       </div>
     } @else {
-      <div class="due-list">
-        @for (due of overdueDues(); track due.id) {
-          <a [routerLink]="['/members', due.memberId]" class="due-row">
-            <div class="due-info">
-              <span class="due-member">{{ memberName(due.memberId) }}</span>
-              <span class="due-desc">{{ due.description }}</span>
+      <div class="debtor-list">
+        @for (entry of filteredDebtors(); track entry.member.id) {
+          <a [routerLink]="['/members', entry.member.id]" class="debtor-card">
+            <div class="debtor-avatar">{{ entry.member.name.charAt(0).toUpperCase() }}</div>
+            <div class="debtor-info">
+              <span class="debtor-name">{{ entry.member.name }}</span>
+              <span class="debtor-sub">{{ entry.member.email ?? entry.member.phone ?? '' }}</span>
             </div>
-            <div class="due-right">
-              <span class="due-amount">{{ formatCurrency(due.amount) }}</span>
-              <span class="due-date overdue">{{ formatDate(due.dueDate) }}</span>
+            <div class="debtor-right">
+              <span class="debtor-amount">{{ formatCurrency(entry.totalDebt) }}</span>
+              @if (entry.dueCount > 1) {
+                <span class="debtor-count">
+                  {{ entry.dueCount }}&nbsp;{{ i18n.t('dashboard.quotas') }}
+                </span>
+              }
             </div>
           </a>
         }

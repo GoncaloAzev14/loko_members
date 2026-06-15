@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="page-header">
+    <h2>{{ i18n.t('clubs.title') }}</h2>
+  </div>
+
+  @if (clubService.club(); as club) {
+    <button class="current-club-card" (click)="enterClub()">
+      <div class="club-avatar">{{ club.name.charAt(0).toUpperCase() }}</div>
+      <div class="club-info">
+        <div class="club-hint">{{ i18n.t('clubs.currentClub') }}</div>
+        <div class="club-name">{{ club.name }}</div>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="enter-chevron"></ion-icon>
+    </button>
+
+    <p class="switch-label">{{ i18n.t('clubs.switchClub') }}</p>
+  }
+
+  @if (mode() === 'choose') {
+    <div class="option-cards">
+      <button class="option-card" (click)="mode.set('create')">
+        <ion-icon name="add-circle-outline" class="option-icon"></ion-icon>
+        <div class="option-text">
+          <span class="option-title">{{ i18n.t('join.createOption') }}</span>
+          <span class="option-sub">{{ i18n.t('join.createOptionSub') }}</span>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="card-chevron"></ion-icon>
+      </button>
+      <button class="option-card" (click)="mode.set('join')">
+        <ion-icon name="enter-outline" class="option-icon"></ion-icon>
+        <div class="option-text">
+          <span class="option-title">{{ i18n.t('join.joinOption') }}</span>
+          <span class="option-sub">{{ i18n.t('join.joinOptionSub') }}</span>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="card-chevron"></ion-icon>
+      </button>
+    </div>
+  }
+
+  @if (mode() === 'create') {
+    <div class="form-card">
+      <button class="back-btn" (click)="mode.set('choose')">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        {{ i18n.t('join.back') }}
+      </button>
+      <h3 class="form-title">{{ i18n.t('join.createTitle') }}</h3>
+      <div class="form-group">
+        <label>{{ i18n.t('join.clubName') }}</label>
+        <input type="text" [(ngModel)]="clubName" [placeholder]="i18n.t('join.clubNamePlaceholder')" />
+      </div>
+      @if (error()) { <p class="error-msg">{{ error() }}</p> }
+      <button class="btn-primary-full" (click)="createClub()" [disabled]="loading() || !clubName.trim()">
+        @if (loading()) { {{ i18n.t('join.creating') }} } @else { {{ i18n.t('join.createBtn') }} }
+      </button>
+    </div>
+  }
+
+  @if (mode() === 'join') {
+    <div class="form-card">
+      <button class="back-btn" (click)="mode.set('choose')">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        {{ i18n.t('join.back') }}
+      </button>
+      <h3 class="form-title">{{ i18n.t('join.joinTitle') }}</h3>
+      <div class="form-group">
+        <label>{{ i18n.t('join.inviteCode') }}</label>
+        <input type="text" [(ngModel)]="inviteCode" [placeholder]="i18n.t('join.inviteCodePlaceholder')" autocomplete="off" />
+      </div>
+      @if (error()) { <p class="error-msg">{{ error() }}</p> }
+      <button class="btn-primary-full" (click)="joinClub()" [disabled]="loading() || !inviteCode.trim()">
+        @if (loading()) { {{ i18n.t('join.joining') }} } @else { {{ i18n.t('join.joinBtn') }} }
+      </button>
+    </div>
+  }
+</div>

@@ -11,6 +11,11 @@
   </main>
 
   <nav class="bottom-nav">
+    <a routerLink="/clubs" routerLinkActive="active" class="nav-item">
+      <ion-icon name="home-outline" class="inactive-icon"></ion-icon>
+      <ion-icon name="home" class="active-icon"></ion-icon>
+      <span>{{ i18n.t('shell.clubs') }}</span>
+    </a>
     <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
       <ion-icon name="grid-outline" class="inactive-icon"></ion-icon>
       <ion-icon name="grid" class="active-icon"></ion-icon>

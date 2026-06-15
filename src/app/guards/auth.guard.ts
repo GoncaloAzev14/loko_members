@@ -45,7 +45,7 @@ export const clubGuard: CanActivateFn = async () => {
   }
 
   if (!club.clubId()) {
-    return router.createUrlTree(['/join']);
+    return router.createUrlTree(['/clubs']);
   }
   return true;
 };

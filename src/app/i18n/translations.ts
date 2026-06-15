@@ -51,9 +51,14 @@ const en = {
   'join.errorJoin': 'Could not join. Try again.',
   // shell
   'shell.appName': 'Loko Members',
+  'shell.clubs': 'Clubs',
   'shell.dashboard': 'Dashboard',
   'shell.members': 'Members',
   'shell.settings': 'Settings',
+  // clubs
+  'clubs.title': 'My Clubs',
+  'clubs.currentClub': 'Current club',
+  'clubs.switchClub': 'Or switch club',
   // dashboard
   'dashboard.title': 'Dashboard',
   'dashboard.activeMembers': 'Active Members',
@@ -212,9 +217,14 @@ const pt: typeof en = {
   'join.errorJoin': 'Não foi possível entrar. Tenta novamente.',
   // shell
   'shell.appName': 'Loko Members',
+  'shell.clubs': 'Clubes',
   'shell.dashboard': 'Painel',
   'shell.members': 'Membros',
   'shell.settings': 'Definições',
+  // clubs
+  'clubs.title': 'Os meus clubes',
+  'clubs.currentClub': 'Clube atual',
+  'clubs.switchClub': 'Ou trocar de clube',
   // dashboard
   'dashboard.title': 'Painel',
   'dashboard.activeMembers': 'Membros ativos',

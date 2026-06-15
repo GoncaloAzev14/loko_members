@@ -12,31 +12,36 @@ export const routes: Routes = [
     canActivate: [publicGuard],
     loadComponent: () => import('./pages/sign-up/sign-up').then((m) => m.SignUpComponent),
   },
-  {
-    path: 'join',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/join-club/join-club').then((m) => m.JoinClubComponent),
-  },
+  // Legacy /join redirects to the clubs page inside the shell
+  { path: 'join', redirectTo: '/clubs', pathMatch: 'full' },
   {
     path: '',
-    canActivate: [authGuard, clubGuard],
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/shell/shell').then((m) => m.ShellComponent),
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'clubs', pathMatch: 'full' },
+      {
+        path: 'clubs',
+        loadComponent: () => import('./pages/clubs/clubs').then((m) => m.ClubsComponent),
+      },
       {
         path: 'dashboard',
+        canActivate: [clubGuard],
         loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.DashboardComponent),
       },
       {
         path: 'members',
+        canActivate: [clubGuard],
         loadComponent: () => import('./pages/member-list/member-list').then((m) => m.MemberListComponent),
       },
       {
         path: 'members/:id',
+        canActivate: [clubGuard],
         loadComponent: () => import('./pages/member-detail/member-detail').then((m) => m.MemberDetailComponent),
       },
       {
         path: 'settings',
+        canActivate: [clubGuard],
         loadComponent: () => import('./pages/settings/settings').then((m) => m.SettingsComponent),
       },
     ],

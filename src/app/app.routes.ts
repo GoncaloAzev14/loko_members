@@ -14,16 +14,15 @@ export const routes: Routes = [
   },
   { path: 'join', redirectTo: '/clubs', pathMatch: 'full' },
   {
-    path: 'clubs',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/clubs/clubs').then((m) => m.ClubsComponent),
-  },
-  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/shell/shell').then((m) => m.ShellComponent),
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'clubs', pathMatch: 'full' },
+      {
+        path: 'clubs',
+        loadComponent: () => import('./pages/clubs/clubs').then((m) => m.ClubsComponent),
+      },
       {
         path: 'dashboard',
         canActivate: [clubGuard],
@@ -46,5 +45,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: '/clubs' },
+  { path: '**', redirectTo: '' },
 ];

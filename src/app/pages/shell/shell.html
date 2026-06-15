@@ -1,9 +1,13 @@
-<div class="app-layout">
+<div class="app-layout" [class.no-nav]="!clubService.clubId()">
   <header class="top-bar">
-    <a routerLink="/clubs" class="club-name" title="{{ i18n.t('shell.clubs') }}">
-      {{ clubService.club()?.name ?? i18n.t('shell.appName') }}
-      <ion-icon name="chevron-down-outline" class="club-switch-icon"></ion-icon>
-    </a>
+    @if (clubService.clubId()) {
+      <a routerLink="/clubs" class="club-name">
+        {{ clubService.club()?.name }}
+        <ion-icon name="chevron-down-outline" class="club-switch-icon"></ion-icon>
+      </a>
+    } @else {
+      <span class="app-name">{{ i18n.t('shell.appName') }}</span>
+    }
     <button class="sign-out-btn" (click)="auth.signOut()" title="Sign out">
       <ion-icon name="log-out-outline"></ion-icon>
     </button>
@@ -13,21 +17,23 @@
     <router-outlet />
   </main>
 
-  <nav class="bottom-nav">
-    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
-      <ion-icon name="grid-outline" class="inactive-icon"></ion-icon>
-      <ion-icon name="grid" class="active-icon"></ion-icon>
-      <span>{{ i18n.t('shell.dashboard') }}</span>
-    </a>
-    <a routerLink="/members" routerLinkActive="active" class="nav-item">
-      <ion-icon name="people-outline" class="inactive-icon"></ion-icon>
-      <ion-icon name="people" class="active-icon"></ion-icon>
-      <span>{{ i18n.t('shell.members') }}</span>
-    </a>
-    <a routerLink="/settings" routerLinkActive="active" class="nav-item">
-      <ion-icon name="settings-outline" class="inactive-icon"></ion-icon>
-      <ion-icon name="settings" class="active-icon"></ion-icon>
-      <span>{{ i18n.t('shell.settings') }}</span>
-    </a>
-  </nav>
+  @if (clubService.clubId()) {
+    <nav class="bottom-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <ion-icon name="grid-outline" class="inactive-icon"></ion-icon>
+        <ion-icon name="grid" class="active-icon"></ion-icon>
+        <span>{{ i18n.t('shell.dashboard') }}</span>
+      </a>
+      <a routerLink="/members" routerLinkActive="active" class="nav-item">
+        <ion-icon name="people-outline" class="inactive-icon"></ion-icon>
+        <ion-icon name="people" class="active-icon"></ion-icon>
+        <span>{{ i18n.t('shell.members') }}</span>
+      </a>
+      <a routerLink="/settings" routerLinkActive="active" class="nav-item">
+        <ion-icon name="settings-outline" class="inactive-icon"></ion-icon>
+        <ion-icon name="settings" class="active-icon"></ion-icon>
+        <span>{{ i18n.t('shell.settings') }}</span>
+      </a>
+    </nav>
+  }
 </div>

@@ -6,7 +6,7 @@ export class I18nService {
   private readonly STORAGE_KEY = 'lang';
 
   lang = signal<Lang>(
-    (localStorage.getItem(this.STORAGE_KEY) as Lang | null) ?? 'en'
+    (localStorage.getItem(this.STORAGE_KEY) as Lang | null) ?? 'pt'
   );
 
   private dict = computed(() => translations[this.lang()]);

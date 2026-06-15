@@ -83,6 +83,21 @@ export class MemberListComponent {
 
   async addMember() {
     if (!this.newName.trim()) return;
+
+    const name  = this.newName.trim().toLowerCase();
+    const email = this.newEmail.trim().toLowerCase();
+    const phone = this.newPhone.trim().toLowerCase();
+
+    const duplicate = this.members().some((m) =>
+      m.name.toLowerCase() === name &&
+      (m.email?.toLowerCase() ?? '') === email &&
+      (m.phone?.toLowerCase() ?? '') === phone
+    );
+    if (duplicate) {
+      this.addError.set(this.i18n.t('members.errorDuplicate'));
+      return;
+    }
+
     this.addLoading.set(true);
     this.addError.set('');
     try {

@@ -1,4 +1,4 @@
-import { Component, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, inject, signal, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClubService } from '../../services/club.service';
@@ -11,10 +11,16 @@ import { I18nService } from '../../services/i18n.service';
   styleUrl: './clubs.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ClubsComponent {
+export class ClubsComponent implements OnInit {
   clubService = inject(ClubService);
   private router = inject(Router);
   i18n = inject(I18nService);
+
+  async ngOnInit() {
+    if (this.clubService.clubs().length === 0) {
+      await this.clubService.loadUserClub();
+    }
+  }
 
   mode = signal<'list' | 'create' | 'join'>('list');
   clubName = '';

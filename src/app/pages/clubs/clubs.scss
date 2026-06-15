@@ -11,31 +11,42 @@
   margin: 0 0 1.25rem;
 }
 
-// Current club card
-.current-club-card {
+// Club list
+.club-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-bottom: 1.5rem;
+}
+
+.club-card {
   display: flex;
   align-items: center;
   gap: 0.875rem;
   width: 100%;
   background: var(--bg-secondary);
-  border: 1.5px solid var(--primary);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1rem 1.125rem;
   cursor: pointer;
   text-align: left;
-  transition: background 0.15s;
-  margin-bottom: 1.5rem;
+  transition: border-color 0.15s;
 
-  &:hover { background: rgba(245, 158, 11, 0.06); }
+  &:hover { border-color: var(--primary); }
+
+  &.active {
+    border-color: var(--primary);
+    border-width: 1.5px;
+  }
 }
 
 .club-avatar {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: rgba(245, 158, 11, 0.15);
   color: var(--primary);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -49,17 +60,17 @@
 }
 
 .club-hint {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+  font-size: 0.7rem;
+  color: var(--primary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-  margin-bottom: 0.2rem;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
 }
 
 .club-name {
-  font-size: 1.0625rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -67,8 +78,8 @@
 }
 
 .enter-chevron {
-  color: var(--primary);
-  font-size: 1.25rem;
+  color: var(--text-secondary);
+  font-size: 1.125rem;
   flex-shrink: 0;
 }
 

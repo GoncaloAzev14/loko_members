@@ -39,5 +39,6 @@ export interface Manager {
 
 export interface UserProfile {
   uid: string;
-  clubId: string;
+  clubId: string;       // active club
+  clubIds?: string[];   // all clubs — optional for backward compat with existing docs
 }

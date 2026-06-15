@@ -3,20 +3,30 @@
     <h2>{{ i18n.t('clubs.title') }}</h2>
   </div>
 
-  @if (clubService.club(); as club) {
-    <button class="current-club-card" (click)="enterClub()">
-      <div class="club-avatar">{{ club.name.charAt(0).toUpperCase() }}</div>
-      <div class="club-info">
-        <div class="club-hint">{{ i18n.t('clubs.currentClub') }}</div>
-        <div class="club-name">{{ club.name }}</div>
+  @if (mode() === 'list') {
+    @if (clubService.clubs().length > 0) {
+      <div class="club-list">
+        @for (c of clubService.clubs(); track c.id) {
+          <button
+            class="club-card"
+            [class.active]="c.id === clubService.clubId()"
+            (click)="enterClub(c.id)"
+          >
+            <div class="club-avatar">{{ c.name.charAt(0).toUpperCase() }}</div>
+            <div class="club-info">
+              @if (c.id === clubService.clubId()) {
+                <div class="club-hint">{{ i18n.t('clubs.currentClub') }}</div>
+              }
+              <div class="club-name">{{ c.name }}</div>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="enter-chevron"></ion-icon>
+          </button>
+        }
       </div>
-      <ion-icon name="chevron-forward-outline" class="enter-chevron"></ion-icon>
-    </button>
 
-    <p class="switch-label">{{ i18n.t('clubs.switchClub') }}</p>
-  }
+      <p class="switch-label">{{ i18n.t('clubs.addClub') }}</p>
+    }
 
-  @if (mode() === 'choose') {
     <div class="option-cards">
       <button class="option-card" (click)="mode.set('create')">
         <ion-icon name="add-circle-outline" class="option-icon"></ion-icon>
@@ -39,7 +49,7 @@
 
   @if (mode() === 'create') {
     <div class="form-card">
-      <button class="back-btn" (click)="mode.set('choose')">
+      <button class="back-btn" (click)="mode.set('list')">
         <ion-icon name="arrow-back-outline"></ion-icon>
         {{ i18n.t('join.back') }}
       </button>
@@ -57,7 +67,7 @@
 
   @if (mode() === 'join') {
     <div class="form-card">
-      <button class="back-btn" (click)="mode.set('choose')">
+      <button class="back-btn" (click)="mode.set('list')">
         <ion-icon name="arrow-back-outline"></ion-icon>
         {{ i18n.t('join.back') }}
       </button>

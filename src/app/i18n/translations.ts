@@ -59,6 +59,7 @@ const en = {
   'clubs.title': 'My Clubs',
   'clubs.currentClub': 'Current club',
   'clubs.switchClub': 'Or switch club',
+  'clubs.addClub': 'Add another club',
   // dashboard
   'dashboard.title': 'Dashboard',
   'dashboard.activeMembers': 'Active Members',
@@ -225,6 +226,7 @@ const pt: typeof en = {
   'clubs.title': 'Os meus clubes',
   'clubs.currentClub': 'Clube atual',
   'clubs.switchClub': 'Ou trocar de clube',
+  'clubs.addClub': 'Adicionar outro clube',
   // dashboard
   'dashboard.title': 'Painel',
   'dashboard.activeMembers': 'Membros ativos',

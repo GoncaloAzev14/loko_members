@@ -16,13 +16,16 @@ export class ClubsComponent {
   private router = inject(Router);
   i18n = inject(I18nService);
 
-  mode = signal<'choose' | 'create' | 'join'>('choose');
+  mode = signal<'list' | 'create' | 'join'>('list');
   clubName = '';
   inviteCode = '';
   error = signal('');
   loading = signal(false);
 
-  enterClub() {
+  async enterClub(clubId: string) {
+    if (clubId !== this.clubService.clubId()) {
+      await this.clubService.switchClub(clubId);
+    }
     this.router.navigate(['/dashboard']);
   }
 
@@ -32,6 +35,8 @@ export class ClubsComponent {
     this.loading.set(true);
     try {
       await this.clubService.createClub(this.clubName.trim());
+      this.clubName = '';
+      this.mode.set('list');
       await this.router.navigate(['/dashboard']);
     } catch (err) {
       console.error('[Clubs] createClub failed:', err);
@@ -48,6 +53,8 @@ export class ClubsComponent {
     try {
       const ok = await this.clubService.joinClub(this.inviteCode.trim());
       if (ok) {
+        this.inviteCode = '';
+        this.mode.set('list');
         await this.router.navigate(['/dashboard']);
       } else {
         this.error.set(this.i18n.t('join.errorCodeNotFound'));

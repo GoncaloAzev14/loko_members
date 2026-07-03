@@ -43,7 +43,7 @@ export class MemberDetailComponent implements OnInit {
   editEmail = '';
   editPhone = '';
   editNotes = '';
-  editMemberNumber = '';
+  editMemberNumber: number | null = null;
   editLoading = signal(false);
   editError = signal('');
 
@@ -67,7 +67,7 @@ export class MemberDetailComponent implements OnInit {
     this.editEmail = m.email ?? '';
     this.editPhone = m.phone ?? '';
     this.editNotes = m.notes ?? '';
-    this.editMemberNumber = m.memberNumber?.toString() ?? '';
+    this.editMemberNumber = m.memberNumber ?? null;
   }
 
   startEdit() {
@@ -81,11 +81,10 @@ export class MemberDetailComponent implements OnInit {
     const m = this.member();
     if (!m) return;
 
-    const numberStr = this.editMemberNumber.trim();
     let newNumber: number | undefined;
-    if (numberStr) {
-      newNumber = parseInt(numberStr, 10);
-      if (isNaN(newNumber) || newNumber < 1) {
+    if (this.editMemberNumber != null) {
+      newNumber = this.editMemberNumber;
+      if (!Number.isInteger(newNumber) || newNumber < 1) {
         this.editError.set(this.i18n.t('members.errorInvalidNumber'));
         return;
       }

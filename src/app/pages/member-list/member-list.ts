@@ -36,7 +36,7 @@ export class MemberListComponent {
   newEmail = '';
   newPhone = '';
   newNotes = '';
-  newMemberNumber = '';
+  newMemberNumber: number | null = null;
   nextNumberHint = signal<number | null>(null);
   addLoading = signal(false);
   addError = signal('');
@@ -100,7 +100,7 @@ export class MemberListComponent {
     this.newEmail = '';
     this.newPhone = '';
     this.newNotes = '';
-    this.newMemberNumber = '';
+    this.newMemberNumber = null;
     this.addError.set('');
     this.showAddModal.set(true);
     this.nextNumberHint.set(null);
@@ -124,11 +124,10 @@ export class MemberListComponent {
       return;
     }
 
-    const numberStr = this.newMemberNumber.trim();
     let memberNumber: number | undefined;
-    if (numberStr) {
-      memberNumber = parseInt(numberStr, 10);
-      if (isNaN(memberNumber) || memberNumber < 1) {
+    if (this.newMemberNumber != null) {
+      memberNumber = this.newMemberNumber;
+      if (!Number.isInteger(memberNumber) || memberNumber < 1) {
         this.addError.set(this.i18n.t('members.errorInvalidNumber'));
         return;
       }

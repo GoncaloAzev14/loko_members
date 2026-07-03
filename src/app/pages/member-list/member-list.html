@@ -1,20 +1,5 @@
 <div class="page">
-  <div class="page-header">
-    <h2>{{ i18n.t('members.title') }}</h2>
-    <div class="header-actions">
-      <button class="btn-icon-sm" (click)="openBulkGenerate()" [title]="i18n.t('members.bulkGenerateBtn')">
-        <ion-icon name="calendar-outline"></ion-icon>
-      </button>
-      <button class="btn-icon-sm" (click)="exportCsv()" [title]="i18n.t('csv.export')">
-        <ion-icon name="download-outline"></ion-icon>
-      </button>
-      <button class="btn-icon-sm" (click)="fileInput.click()" [title]="i18n.t('csv.import')">
-        <ion-icon name="cloud-upload-outline"></ion-icon>
-      </button>
-      <input #fileInput type="file" accept=".csv" style="display:none" (change)="handleFileImport($event)" />
-    </div>
-  </div>
-
+  <input #fileInput type="file" accept=".csv" style="display:none" (change)="handleFileImport($event)" />
   <div class="toolbar">
     <div class="search-wrap">
       <ion-icon name="search-outline"></ion-icon>
@@ -77,6 +62,9 @@
   <button class="fab" (click)="openAdd()" [title]="i18n.t('members.addBtn')">
     <ion-icon name="add-outline"></ion-icon>
   </button>
+  <button class="fab fab--secondary" (click)="showMoreActions.set(true)" [title]="i18n.t('members.moreActionsTitle')">
+    <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+  </button>
 </div>
 
 @if (showAddModal()) {
@@ -111,6 +99,33 @@
         <button class="btn-ghost" (click)="showAddModal.set(false)">{{ i18n.t('members.cancel') }}</button>
         <button class="btn-primary" (click)="addMember()" [disabled]="addLoading() || !newName.trim()">
           @if (addLoading()) { {{ i18n.t('members.adding') }} } @else { {{ i18n.t('members.add') }} }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showMoreActions()) {
+  <div class="modal-backdrop" (click)="showMoreActions.set(false)">
+    <div class="modal modal--sm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ i18n.t('members.moreActionsTitle') }}</h3>
+        <button class="modal-close" (click)="showMoreActions.set(false)">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="modal-body action-list">
+        <button class="action-row" (click)="showMoreActions.set(false); openBulkGenerate()">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ i18n.t('members.bulkGenerateBtn') }}</span>
+        </button>
+        <button class="action-row" (click)="showMoreActions.set(false); exportCsv()">
+          <ion-icon name="download-outline"></ion-icon>
+          <span>{{ i18n.t('csv.export') }}</span>
+        </button>
+        <button class="action-row" (click)="showMoreActions.set(false); fileInput.click()">
+          <ion-icon name="cloud-upload-outline"></ion-icon>
+          <span>{{ i18n.t('csv.import') }}</span>
         </button>
       </div>
     </div>

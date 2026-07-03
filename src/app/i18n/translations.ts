@@ -62,7 +62,6 @@ const en = {
   'clubs.switchClub': 'Or switch club',
   'clubs.addClub': 'Add another club',
   // dashboard
-  'dashboard.title': 'Dashboard',
   'dashboard.activeMembers': 'Active Members',
   'dashboard.unpaidDues': 'Unpaid Dues',
   'dashboard.totalOwed': 'Total Owed',
@@ -75,11 +74,11 @@ const en = {
   'dashboard.quota': 'quota',
   'dashboard.quotas': 'quotas',
   // members list
-  'members.title': 'Members',
   'members.search': 'Search members…',
   'members.noResults': 'No members found',
   'members.due': 'due',
   'members.inactive': 'Inactive',
+  'members.moreActionsTitle': 'More actions',
   'members.addBtn': 'Add member',
   'members.bulkGenerateBtn': 'Generate yearly quotas',
   'members.addTitle': 'Add Member',
@@ -162,7 +161,6 @@ const en = {
   'bulkGenerate.resultSummary': '{{created}} quota(s) created, {{skipped}} skipped',
   'bulkGenerate.errorGenerate': 'Could not generate quotas. Try again.',
   // settings
-  'settings.title': 'Settings',
   'settings.clubName': 'Club Name',
   'settings.edit': 'Edit',
   'settings.cancel': 'Cancel',
@@ -265,7 +263,6 @@ const pt: typeof en = {
   'clubs.switchClub': 'Ou trocar de clube',
   'clubs.addClub': 'Adicionar outro clube',
   // dashboard
-  'dashboard.title': 'Painel',
   'dashboard.activeMembers': 'Sócios ativos',
   'dashboard.unpaidDues': 'Quotas em atraso',
   'dashboard.totalOwed': 'Total em dívida',
@@ -278,11 +275,11 @@ const pt: typeof en = {
   'dashboard.quota': 'quota',
   'dashboard.quotas': 'quotas',
   // members list
-  'members.title': 'Sócios',
   'members.search': 'Pesquisar sócios…',
   'members.noResults': 'Nenhum membro encontrado',
   'members.due': 'em dívida',
   'members.inactive': 'Inativo',
+  'members.moreActionsTitle': 'Mais opções',
   'members.addBtn': 'Adicionar membro',
   'members.bulkGenerateBtn': 'Gerar quotas anuais',
   'members.addTitle': 'Adicionar membro',
@@ -365,7 +362,6 @@ const pt: typeof en = {
   'bulkGenerate.resultSummary': '{{created}} quota(s) criada(s), {{skipped}} ignorada(s)',
   'bulkGenerate.errorGenerate': 'Não foi possível gerar as quotas. Tenta novamente.',
   // settings
-  'settings.title': 'Definições',
   'settings.clubName': 'Nome do clube',
   'settings.edit': 'Editar',
   'settings.cancel': 'Cancelar',

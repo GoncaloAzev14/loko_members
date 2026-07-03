@@ -35,6 +35,7 @@ export class MemberListComponent {
   readonly statusFilterOptions: MemberFilter[] = ['all', 'active', 'inactive'];
   readonly duesFilterOptions: MemberFilter[] = ['unpaid', 'paid'];
   showAddModal = signal(false);
+  showMoreActions = signal(false);
 
   newName = '';
   newEmail = '';

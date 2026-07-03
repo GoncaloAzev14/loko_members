@@ -213,7 +213,9 @@
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
   transition: background 0.15s, transform 0.15s;
-  z-index: 210;
+  // Above the speed dial's own scrim (below), but must stay under real modals
+  // (.modal-backdrop is 200) so this doesn't float above unrelated dialogs.
+  z-index: 90;
 
   &:hover {
     background: var(--primary-dark);
@@ -237,12 +239,18 @@
 }
 
 // Speed dial: small circular actions that radiate up from the secondary FAB.
+// Sits above its own scrim (z-index 80, below) but below real modals (200),
+// so unrelated dialogs like bulk-generate still cover the FABs as expected.
 .speed-dial {
   position: fixed;
   bottom: calc(64px + 1.25rem);
   left: 1.25rem;
-  z-index: 205;
+  z-index: 90;
   pointer-events: none;
+}
+
+.modal-backdrop.speed-dial-scrim {
+  z-index: 80;
 }
 
 .speed-dial-item {

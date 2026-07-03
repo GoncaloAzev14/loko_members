@@ -47,8 +47,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 // Shared enter/leave animations for every .modal-backdrop / .modal across the app.
-// Enter plays automatically on insertion; `animate.leave` (in templates) applies the
-// "--leaving" class and Angular waits for it to finish before removing the element.
+// Enter plays automatically on insertion. `animate.leave` (in templates) is only bound
+// on .modal-backdrop — Angular only honors animate.leave on the root of the removed
+// view, not on nested descendants — so the inner .modal's exit is driven by a plain
+// CSS cascade off the backdrop's "--leaving" class instead, timed to match.
 @keyframes modal-backdrop-in {
   from { opacity: 0; }
 }
@@ -57,28 +59,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   to { opacity: 0; }
 }
 
+// Modals are bottom sheets on mobile (see .modal-backdrop's align-items: flex-end),
+// so they should genuinely slide up from off-screen, not just nudge + fade.
 @keyframes modal-pop-in {
-  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  from { transform: translateY(100%); }
 }
 
 @keyframes modal-pop-out {
-  to { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { transform: translateY(100%); }
 }
 
 .modal-backdrop {
-  animation: modal-backdrop-in 0.18s ease-out;
+  animation: modal-backdrop-in 0.25s ease-out;
 }
 
 .modal-backdrop--leaving {
-  animation: modal-backdrop-out 0.15s ease-in forwards;
+  animation: modal-backdrop-out 0.22s ease-in forwards;
+
+  .modal {
+    animation: modal-pop-out 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
 }
 
 .modal {
-  animation: modal-pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.modal--leaving {
-  animation: modal-pop-out 0.15s ease-in forwards;
+  animation: modal-pop-in 0.4s cubic-bezier(0.34, 1.15, 0.64, 1);
 }
 
 // Same treatment for the router outlet's view-transition cross-fade.

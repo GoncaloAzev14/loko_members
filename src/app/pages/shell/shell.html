@@ -40,6 +40,7 @@
 
   @if (clubService.clubId()) {
     <nav class="bottom-nav">
+      <div class="nav-indicator" [style.transform]="'translate(' + (activeTabIndex() * 100) + '%, 0)'"></div>
       <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
         <ion-icon name="grid-outline" class="inactive-icon"></ion-icon>
         <ion-icon name="grid" class="active-icon"></ion-icon>

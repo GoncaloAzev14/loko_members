@@ -59,17 +59,35 @@
     </div>
   }
 
+  <div class="speed-dial" [class.open]="showMoreActions()">
+    <button class="speed-dial-item" (click)="showMoreActions.set(false); openBulkGenerate()">
+      <span class="speed-dial-circle"><ion-icon name="calendar-outline"></ion-icon></span>
+      <span class="speed-dial-label">{{ i18n.t('members.bulkGenerateBtn') }}</span>
+    </button>
+    <button class="speed-dial-item" (click)="showMoreActions.set(false); exportCsv()">
+      <span class="speed-dial-circle"><ion-icon name="download-outline"></ion-icon></span>
+      <span class="speed-dial-label">{{ i18n.t('csv.export') }}</span>
+    </button>
+    <button class="speed-dial-item" (click)="showMoreActions.set(false); fileInput.click()">
+      <span class="speed-dial-circle"><ion-icon name="cloud-upload-outline"></ion-icon></span>
+      <span class="speed-dial-label">{{ i18n.t('csv.import') }}</span>
+    </button>
+  </div>
   <button class="fab" (click)="openAdd()" [title]="i18n.t('members.addBtn')">
     <ion-icon name="add-outline"></ion-icon>
   </button>
-  <button class="fab fab--secondary" (click)="showMoreActions.set(true)" [title]="i18n.t('members.moreActionsTitle')">
-    <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+  <button class="fab fab--secondary" (click)="showMoreActions.set(!showMoreActions())" [title]="i18n.t('members.moreActionsTitle')">
+    <ion-icon [name]="showMoreActions() ? 'close-outline' : 'ellipsis-horizontal-outline'"></ion-icon>
   </button>
 </div>
 
+@if (showMoreActions()) {
+  <div class="modal-backdrop speed-dial-scrim" animate.leave="modal-backdrop--leaving" (click)="showMoreActions.set(false)"></div>
+}
+
 @if (showAddModal()) {
   <div class="modal-backdrop" animate.leave="modal-backdrop--leaving" (click)="showAddModal.set(false)">
-    <div class="modal" animate.leave="modal--leaving" (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3>{{ i18n.t('members.addTitle') }}</h3>
         <button class="modal-close" (click)="showAddModal.set(false)">
@@ -105,36 +123,9 @@
   </div>
 }
 
-@if (showMoreActions()) {
-  <div class="modal-backdrop" animate.leave="modal-backdrop--leaving" (click)="showMoreActions.set(false)">
-    <div class="modal modal--sm" animate.leave="modal--leaving" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>{{ i18n.t('members.moreActionsTitle') }}</h3>
-        <button class="modal-close" (click)="showMoreActions.set(false)">
-          <ion-icon name="close-outline"></ion-icon>
-        </button>
-      </div>
-      <div class="modal-body action-list">
-        <button class="action-row" (click)="showMoreActions.set(false); openBulkGenerate()">
-          <ion-icon name="calendar-outline"></ion-icon>
-          <span>{{ i18n.t('members.bulkGenerateBtn') }}</span>
-        </button>
-        <button class="action-row" (click)="showMoreActions.set(false); exportCsv()">
-          <ion-icon name="download-outline"></ion-icon>
-          <span>{{ i18n.t('csv.export') }}</span>
-        </button>
-        <button class="action-row" (click)="showMoreActions.set(false); fileInput.click()">
-          <ion-icon name="cloud-upload-outline"></ion-icon>
-          <span>{{ i18n.t('csv.import') }}</span>
-        </button>
-      </div>
-    </div>
-  </div>
-}
-
 @if (importPreview()) {
   <div class="modal-backdrop" animate.leave="modal-backdrop--leaving" (click)="importPreview.set(null)">
-    <div class="modal" animate.leave="modal--leaving" (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3>{{ i18n.t('csv.previewTitle') }}</h3>
         <button class="modal-close" (click)="importPreview.set(null)">
@@ -196,7 +187,7 @@
 
 @if (showBulkGenerate()) {
   <div class="modal-backdrop" animate.leave="modal-backdrop--leaving" (click)="showBulkGenerate.set(false)">
-    <div class="modal" animate.leave="modal--leaving" (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3>{{ i18n.t('bulkGenerate.title') }}</h3>
         <button class="modal-close" (click)="showBulkGenerate.set(false)">

@@ -92,7 +92,7 @@
 
 @if (confirmRemoveUid()) {
   <div class="modal-backdrop" animate.leave="modal-backdrop--leaving" (click)="confirmRemoveUid.set(null)">
-    <div class="modal" animate.leave="modal--leaving" (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3>{{ i18n.t('settings.removeTitle') }}</h3>
       </div>
@@ -111,7 +111,7 @@
 
 @if (confirmPromoteUid()) {
   <div class="modal-backdrop" animate.leave="modal-backdrop--leaving" (click)="confirmPromoteUid.set(null)">
-    <div class="modal" animate.leave="modal--leaving" (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3>{{ i18n.t('settings.promoteTitle') }}</h3>
       </div>

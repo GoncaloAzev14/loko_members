@@ -4,13 +4,13 @@
   </div>
 
   <div class="stats-grid">
-    <div class="stat-card">
+    <a [routerLink]="['/members']" [queryParams]="{ filter: 'active' }" class="stat-card stat-card--link">
       <ion-icon name="people-outline"></ion-icon>
       <div class="stat-body">
         <span class="stat-value">{{ activeMembers().length }}</span>
         <span class="stat-label">{{ i18n.t('dashboard.activeMembers') }}</span>
       </div>
-    </div>
+    </a>
 
     <div class="stat-card stat-card--warn">
       <ion-icon name="receipt-outline"></ion-icon>

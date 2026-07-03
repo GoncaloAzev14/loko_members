@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Timestamp } from '@angular/fire/firestore';
 import { MemberService, MemberNumberTakenError } from '../../services/member.service';
@@ -18,6 +18,7 @@ import { I18nService } from '../../services/i18n.service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MemberListComponent {
+  private route = inject(ActivatedRoute);
   private memberService = inject(MemberService);
   private duesService = inject(DuesService);
   private csvService = inject(CsvService);
@@ -28,7 +29,7 @@ export class MemberListComponent {
   dues = toSignal(this.duesService.getAll(), { initialValue: [] as Due[] });
 
   search = signal('');
-  filter = signal<'all' | 'active' | 'inactive'>('all');
+  filter = signal<'all' | 'active' | 'inactive'>(this.initialFilter());
   readonly filterOptions: Array<'all' | 'active' | 'inactive'> = ['all', 'active', 'inactive'];
   showAddModal = signal(false);
 
@@ -56,6 +57,11 @@ export class MemberListComponent {
   bulkResult = signal<{ created: number; skipped: number } | null>(null);
 
   activeMembers = computed(() => this.members().filter((m) => m.active));
+
+  private initialFilter(): 'all' | 'active' | 'inactive' {
+    const q = this.route.snapshot.queryParamMap.get('filter');
+    return q === 'active' || q === 'inactive' ? q : 'all';
+  }
 
   bulkPreview = computed(() => {
     const year = this.bulkYear();

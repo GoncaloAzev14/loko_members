@@ -48,6 +48,14 @@
   &--danger ion-icon { color: var(--danger); }
 }
 
+.stat-card--link {
+  text-decoration: none;
+  transition: border-color 0.15s;
+  cursor: pointer;
+
+  &:hover { border-color: var(--primary); }
+}
+
 .stat-body {
   display: flex;
   flex-direction: column;

@@ -102,6 +102,30 @@
   }
 }
 
+.dues-filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dues-filter-tab {
+  padding: 0.3rem 0.75rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &.active {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 700;
+  }
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;

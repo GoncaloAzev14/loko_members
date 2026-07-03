@@ -26,11 +26,20 @@
       />
     </div>
     <div class="filter-tabs">
-      @for (f of filterOptions; track f) {
+      @for (f of statusFilterOptions; track f) {
         <button
           class="filter-tab"
           [class.active]="filter() === f"
           (click)="filter.set(f)"
+        >{{ i18n.t('members.filter_' + f) }}</button>
+      }
+    </div>
+    <div class="dues-filter-tabs">
+      @for (f of duesFilterOptions; track f) {
+        <button
+          class="dues-filter-tab"
+          [class.active]="filter() === f"
+          (click)="filter.set(filter() === f ? 'all' : f)"
         >{{ i18n.t('members.filter_' + f) }}</button>
       }
     </div>

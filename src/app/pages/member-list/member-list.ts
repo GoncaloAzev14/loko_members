@@ -32,7 +32,8 @@ export class MemberListComponent {
 
   search = signal('');
   filter = signal<MemberFilter>(this.initialFilter());
-  readonly filterOptions: MemberFilter[] = ['all', 'active', 'inactive', 'unpaid', 'paid'];
+  readonly statusFilterOptions: MemberFilter[] = ['all', 'active', 'inactive'];
+  readonly duesFilterOptions: MemberFilter[] = ['unpaid', 'paid'];
   showAddModal = signal(false);
 
   newName = '';

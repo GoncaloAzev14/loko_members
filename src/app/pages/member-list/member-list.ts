@@ -10,6 +10,8 @@ import { CsvService, ImportPreview } from '../../services/csv.service';
 import { Member, Due, getDueYear } from '../../models/models';
 import { I18nService } from '../../services/i18n.service';
 
+type MemberFilter = 'all' | 'active' | 'inactive' | 'unpaid' | 'paid';
+
 @Component({
   selector: 'app-member-list',
   imports: [FormsModule, RouterLink],
@@ -29,8 +31,8 @@ export class MemberListComponent {
   dues = toSignal(this.duesService.getAll(), { initialValue: [] as Due[] });
 
   search = signal('');
-  filter = signal<'all' | 'active' | 'inactive'>(this.initialFilter());
-  readonly filterOptions: Array<'all' | 'active' | 'inactive'> = ['all', 'active', 'inactive'];
+  filter = signal<MemberFilter>(this.initialFilter());
+  readonly filterOptions: MemberFilter[] = ['all', 'active', 'inactive', 'unpaid', 'paid'];
   showAddModal = signal(false);
 
   newName = '';
@@ -56,9 +58,9 @@ export class MemberListComponent {
 
   activeMembers = computed(() => this.members().filter((m) => m.active));
 
-  private initialFilter(): 'all' | 'active' | 'inactive' {
+  private initialFilter(): MemberFilter {
     const q = this.route.snapshot.queryParamMap.get('filter');
-    return q === 'active' || q === 'inactive' ? q : 'all';
+    return q === 'active' || q === 'inactive' || q === 'unpaid' || q === 'paid' ? q : 'all';
   }
 
   bulkPreview = computed(() => {
@@ -78,7 +80,9 @@ export class MemberListComponent {
         const matchFilter =
           this.filter() === 'all' ||
           (this.filter() === 'active' && m.active) ||
-          (this.filter() === 'inactive' && !m.active);
+          (this.filter() === 'inactive' && !m.active) ||
+          (this.filter() === 'unpaid' && this.pendingDuesCount(m.id) > 0) ||
+          (this.filter() === 'paid' && this.pendingDuesCount(m.id) === 0);
         const matchSearch = !q || m.name.toLowerCase().includes(q);
         return matchFilter && matchSearch;
       })

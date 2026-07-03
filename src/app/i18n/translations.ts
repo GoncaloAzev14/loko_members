@@ -107,6 +107,8 @@ const en = {
   'members.filter_all': 'All',
   'members.filter_active': 'Active',
   'members.filter_inactive': 'Inactive',
+  'members.filter_unpaid': 'Unpaid',
+  'members.filter_paid': 'Paid',
   // member detail
   'memberDetail.backToMembers': 'Members',
   'memberDetail.edit': 'Edit',
@@ -308,6 +310,8 @@ const pt: typeof en = {
   'members.filter_all': 'Todos',
   'members.filter_active': 'Ativos',
   'members.filter_inactive': 'Inativos',
+  'members.filter_unpaid': 'Em dívida',
+  'members.filter_paid': 'Em dia',
   // member detail
   'memberDetail.backToMembers': 'Sócios',
   'memberDetail.edit': 'Editar',

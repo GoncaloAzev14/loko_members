@@ -59,6 +59,31 @@
   }
 }
 
+.hero-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.125rem;
+}
+
+.number-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 2rem;
+  padding: 0.125rem 0.625rem;
+  white-space: nowrap;
+
+  &--unassigned {
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    border-color: var(--border);
+  }
+}
+
 .hero-sub {
   display: flex;
   align-items: center;
@@ -67,6 +92,13 @@
   color: var(--text-secondary);
 
   ion-icon { font-size: 0.875rem; }
+}
+
+.hero-sub--copyable {
+  cursor: pointer;
+  transition: color 0.15s;
+
+  &:hover { color: var(--primary); }
 }
 
 .hero-notes {

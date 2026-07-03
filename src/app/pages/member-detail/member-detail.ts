@@ -57,6 +57,20 @@ export class MemberDetailComponent implements OnInit {
 
   confirmDeleteId = signal<string | null>(null);
 
+  copiedField = signal<'phone' | 'email' | null>(null);
+
+  async copyToClipboard(text: string, field: 'phone' | 'email') {
+    try {
+      await navigator.clipboard.writeText(text);
+      this.copiedField.set(field);
+      setTimeout(() => {
+        if (this.copiedField() === field) this.copiedField.set(null);
+      }, 1500);
+    } catch {
+      // Clipboard API unavailable/blocked — nothing sensible to recover to, just skip the feedback.
+    }
+  }
+
   ngOnInit() {
     const m = this.member();
     if (m) this.resetEdit(m);

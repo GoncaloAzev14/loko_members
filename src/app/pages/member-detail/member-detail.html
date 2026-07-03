@@ -9,10 +9,24 @@
       <div class="avatar">{{ m.name.charAt(0).toUpperCase() }}</div>
       @if (!editing()) {
         <div class="hero-info">
-          <h2>{{ m.name }}</h2>
-          <span class="hero-sub"><ion-icon name="pricetag-outline"></ion-icon> {{ m.memberNumber ?? '—' }}</span>
-          @if (m.phone) { <span class="hero-sub"><ion-icon name="call-outline"></ion-icon> {{ m.phone }}</span> }
-          @if (m.email) { <span class="hero-sub"><ion-icon name="mail-outline"></ion-icon> {{ m.email }}</span> }
+          <div class="hero-title">
+            <h2>{{ m.name }}</h2>
+            <span class="number-badge" [class.number-badge--unassigned]="!m.memberNumber">
+              {{ i18n.t('memberDetail.numberPrefix') }} {{ m.memberNumber ?? '—' }}
+            </span>
+          </div>
+          @if (m.phone) {
+            <span class="hero-sub hero-sub--copyable" (click)="copyToClipboard(m.phone, 'phone')" [title]="i18n.t('memberDetail.copyHint')">
+              <ion-icon [name]="copiedField() === 'phone' ? 'checkmark-outline' : 'call-outline'"></ion-icon>
+              {{ m.phone }}
+            </span>
+          }
+          @if (m.email) {
+            <span class="hero-sub hero-sub--copyable" (click)="copyToClipboard(m.email, 'email')" [title]="i18n.t('memberDetail.copyHint')">
+              <ion-icon [name]="copiedField() === 'email' ? 'checkmark-outline' : 'mail-outline'"></ion-icon>
+              {{ m.email }}
+            </span>
+          }
           @if (m.notes) { <span class="hero-notes">{{ m.notes }}</span> }
         </div>
         <div class="hero-actions">

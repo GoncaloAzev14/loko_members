@@ -6,7 +6,6 @@ import {
   collection,
   collectionData,
   doc,
-  getDoc,
   updateDoc,
   deleteDoc,
   runTransaction,
@@ -50,14 +49,6 @@ export class MemberService {
 
   getAll(): Observable<Member[]> {
     return this.members$;
-  }
-
-  /** Advisory only (not reserved) — for showing a "next number" hint in the add-member form. */
-  async peekNextMemberNumber(): Promise<number> {
-    const clubId = this.clubService.clubId()!;
-    const snap = await getDoc(this.counterDoc(clubId));
-    const current = (snap.data()?.['value'] as number | undefined) ?? 0;
-    return current + 1;
   }
 
   async add(

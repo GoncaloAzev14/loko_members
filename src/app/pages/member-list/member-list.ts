@@ -37,8 +37,6 @@ export class MemberListComponent {
   newEmail = '';
   newPhone = '';
   newNotes = '';
-  newMemberNumber: number | null = null;
-  nextNumberHint = signal<number | null>(null);
   addLoading = signal(false);
   addError = signal('');
 
@@ -106,11 +104,8 @@ export class MemberListComponent {
     this.newEmail = '';
     this.newPhone = '';
     this.newNotes = '';
-    this.newMemberNumber = null;
     this.addError.set('');
     this.showAddModal.set(true);
-    this.nextNumberHint.set(null);
-    this.memberService.peekNextMemberNumber().then((n) => this.nextNumberHint.set(n));
   }
 
   async addMember() {
@@ -130,15 +125,6 @@ export class MemberListComponent {
       return;
     }
 
-    let memberNumber: number | undefined;
-    if (this.newMemberNumber != null) {
-      memberNumber = this.newMemberNumber;
-      if (!Number.isInteger(memberNumber) || memberNumber < 1) {
-        this.addError.set(this.i18n.t('members.errorInvalidNumber'));
-        return;
-      }
-    }
-
     this.addLoading.set(true);
     this.addError.set('');
     try {
@@ -147,7 +133,6 @@ export class MemberListComponent {
         email: this.newEmail.trim() || undefined,
         phone: this.newPhone.trim() || undefined,
         notes: this.newNotes.trim() || undefined,
-        memberNumber,
       });
       this.showAddModal.set(false);
     } catch (err) {

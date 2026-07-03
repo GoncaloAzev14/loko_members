@@ -16,6 +16,7 @@ export interface Member {
   active: boolean;
   joinedAt: Timestamp;
   notes?: string;
+  memberNumber?: number; // optional — legacy members won't have one until backfilled manually
 }
 
 export interface Due {
@@ -24,9 +25,15 @@ export interface Due {
   description: string;
   amount: number;
   dueDate: Timestamp;
+  year?: number; // optional — legacy dues won't have one; read via getDueYear()
   paid: boolean;
   paidAt?: Timestamp;
   createdAt: Timestamp;
+}
+
+// Legacy dues predate the `year` field — always read a due's year through this helper.
+export function getDueYear(due: Due): number {
+  return due.year ?? due.dueDate.toDate().getFullYear();
 }
 
 export interface Manager {

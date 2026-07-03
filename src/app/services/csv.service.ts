@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Member, Due } from '../models/models';
+import { Member, Due, getDueYear } from '../models/models';
 
 export interface ParsedMember {
   name: string;
+  memberNumber?: number;
   email?: string;
   phone?: string;
   active: boolean;
@@ -15,6 +16,7 @@ export interface ParsedDue {
   description: string;
   amount: number;
   dueDate: Date;
+  year: number;
   paid: boolean;
   paidAt?: Date;
 }
@@ -42,6 +44,22 @@ export interface ImportPreview {
 export class CsvService {
   static readonly HEADERS = [
     'member_name',
+    'member_number',
+    'member_email',
+    'member_phone',
+    'member_active',
+    'member_notes',
+    'due_description',
+    'due_amount',
+    'due_date',
+    'due_year',
+    'due_paid',
+    'due_paid_at',
+  ] as const;
+
+  // member_number/due_year are optional so CSVs exported before these fields existed still import cleanly.
+  static readonly REQUIRED_HEADERS: readonly string[] = [
+    'member_name',
     'member_email',
     'member_phone',
     'member_active',
@@ -51,7 +69,7 @@ export class CsvService {
     'due_date',
     'due_paid',
     'due_paid_at',
-  ] as const;
+  ];
 
   exportToCsv(members: Member[], dues: Due[]): string {
     const lines: string[] = [CsvService.HEADERS.join(',')];
@@ -73,6 +91,7 @@ export class CsvService {
   private memberRow(m: Member, d: Due | null): string {
     return [
       this.esc(m.name),
+      m.memberNumber?.toString() ?? '',
       this.esc(m.email ?? ''),
       this.esc(m.phone ?? ''),
       m.active ? 'true' : 'false',
@@ -80,6 +99,7 @@ export class CsvService {
       d ? this.esc(d.description) : '',
       d ? d.amount.toFixed(2) : '',
       d ? this.toDateStr(d.dueDate.toDate()) : '',
+      d ? String(getDueYear(d)) : '',
       d ? (d.paid ? 'true' : 'false') : '',
       d?.paidAt ? this.toDateStr(d.paidAt.toDate()) : '',
     ].join(',');
@@ -92,7 +112,7 @@ export class CsvService {
     if (rows.length < 2) return { members: [], dues: [], errors: ['No data rows found'] };
 
     const headers = rows[0].map((h) => h.trim().toLowerCase());
-    const missing = CsvService.HEADERS.filter((h) => !headers.includes(h));
+    const missing = CsvService.REQUIRED_HEADERS.filter((h) => !headers.includes(h));
     if (missing.length) return { members: [], dues: [], errors: [`Missing columns: ${missing.join(', ')}`] };
 
     const col = (row: string[], name: string) => (row[headers.indexOf(name)] ?? '').trim();
@@ -110,8 +130,19 @@ export class CsvService {
       const memberKey = email?.toLowerCase() ?? name.toLowerCase();
 
       if (!memberMap.has(memberKey)) {
+        const numberStr = col(row, 'member_number');
+        let memberNumber: number | undefined;
+        if (numberStr) {
+          memberNumber = parseInt(numberStr, 10);
+          if (isNaN(memberNumber)) {
+            errors.push(`Row ${i + 1}: invalid member_number "${numberStr}", ignored`);
+            memberNumber = undefined;
+          }
+        }
+
         memberMap.set(memberKey, {
           name,
+          memberNumber,
           email,
           phone: col(row, 'member_phone') || undefined,
           active: col(row, 'member_active').toLowerCase() !== 'false',
@@ -132,12 +163,24 @@ export class CsvService {
         const paidAtStr = col(row, 'due_paid_at');
         const paidAt = paidAtStr ? new Date(paidAtStr) : undefined;
 
+        const yearStr = col(row, 'due_year');
+        let year = dueDate.getFullYear();
+        if (yearStr) {
+          const parsedYear = parseInt(yearStr, 10);
+          if (isNaN(parsedYear)) {
+            errors.push(`Row ${i + 1}: invalid due_year "${yearStr}", derived from due_date instead`);
+          } else {
+            year = parsedYear;
+          }
+        }
+
         dues.push({
           memberName: name,
           memberEmail: email,
           description: desc,
           amount,
           dueDate,
+          year,
           paid: col(row, 'due_paid').toLowerCase() === 'true',
           paidAt: paidAt && !isNaN(paidAt.getTime()) ? paidAt : undefined,
         });
@@ -171,6 +214,7 @@ export class CsvService {
         resolvedIds.set(key, existing.id);
         const differs =
           existing.name !== pm.name ||
+          (existing.memberNumber ?? null) !== (pm.memberNumber ?? null) ||
           (existing.email ?? '') !== (pm.email ?? '') ||
           (existing.phone ?? '') !== (pm.phone ?? '') ||
           existing.active !== pm.active ||
@@ -180,6 +224,15 @@ export class CsvService {
         membersToCreate.push(pm);
       }
     }
+
+    const numberCounts = new Map<number, number>();
+    for (const pm of parsed.members) {
+      if (pm.memberNumber == null) continue;
+      numberCounts.set(pm.memberNumber, (numberCounts.get(pm.memberNumber) ?? 0) + 1);
+    }
+    const duplicateNumberWarnings = Array.from(numberCounts.entries())
+      .filter(([, count]) => count > 1)
+      .map(([number]) => `member_number ${number} appears more than once in the file`);
 
     const duesToCreate: ParsedDue[] = [];
     const duesToUpdate: DueUpdate[] = [];
@@ -208,7 +261,13 @@ export class CsvService {
       }
     }
 
-    return { membersToCreate, membersToUpdate, duesToCreate, duesToUpdate, parseErrors: parsed.errors };
+    return {
+      membersToCreate,
+      membersToUpdate,
+      duesToCreate,
+      duesToUpdate,
+      parseErrors: [...parsed.errors, ...duplicateNumberWarnings],
+    };
   }
 
   private parseRows(content: string): string[][] {

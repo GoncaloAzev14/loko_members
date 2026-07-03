@@ -3,11 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Timestamp } from '@angular/fire/firestore';
-import { MemberService } from '../../services/member.service';
+import { MemberService, MemberNumberTakenError } from '../../services/member.service';
 import { DuesService } from '../../services/dues.service';
 import { ClubService } from '../../services/club.service';
 import { CsvService, ImportPreview } from '../../services/csv.service';
-import { Member, Due } from '../../models/models';
+import { Member, Due, getDueYear } from '../../models/models';
 import { I18nService } from '../../services/i18n.service';
 
 @Component({
@@ -36,6 +36,8 @@ export class MemberListComponent {
   newEmail = '';
   newPhone = '';
   newNotes = '';
+  newMemberNumber = '';
+  nextNumberHint = signal<number | null>(null);
   addLoading = signal(false);
   addError = signal('');
 
@@ -43,6 +45,27 @@ export class MemberListComponent {
   importPreview = signal<ImportPreview | null>(null);
   importLoading = signal(false);
   importError = signal('');
+
+  // Bulk-generate yearly dues state
+  showBulkGenerate = signal(false);
+  bulkYear = signal(new Date().getFullYear());
+  bulkAmount = '';
+  bulkDescription = '';
+  bulkLoading = signal(false);
+  bulkError = signal('');
+  bulkResult = signal<{ created: number; skipped: number } | null>(null);
+
+  activeMembers = computed(() => this.members().filter((m) => m.active));
+
+  bulkPreview = computed(() => {
+    const year = this.bulkYear();
+    const dues = this.dues();
+    const active = this.activeMembers();
+    const eligible = active.filter(
+      (m) => !dues.some((d) => d.memberId === m.id && getDueYear(d) === year)
+    );
+    return { eligible: eligible.length, skipped: active.length - eligible.length };
+  });
 
   filtered = computed(() => {
     const q = this.search().toLowerCase();
@@ -77,8 +100,11 @@ export class MemberListComponent {
     this.newEmail = '';
     this.newPhone = '';
     this.newNotes = '';
+    this.newMemberNumber = '';
     this.addError.set('');
     this.showAddModal.set(true);
+    this.nextNumberHint.set(null);
+    this.memberService.peekNextMemberNumber().then((n) => this.nextNumberHint.set(n));
   }
 
   async addMember() {
@@ -98,6 +124,16 @@ export class MemberListComponent {
       return;
     }
 
+    const numberStr = this.newMemberNumber.trim();
+    let memberNumber: number | undefined;
+    if (numberStr) {
+      memberNumber = parseInt(numberStr, 10);
+      if (isNaN(memberNumber) || memberNumber < 1) {
+        this.addError.set(this.i18n.t('members.errorInvalidNumber'));
+        return;
+      }
+    }
+
     this.addLoading.set(true);
     this.addError.set('');
     try {
@@ -106,6 +142,7 @@ export class MemberListComponent {
         email: this.newEmail.trim() || undefined,
         phone: this.newPhone.trim() || undefined,
         notes: this.newNotes.trim() || undefined,
+        memberNumber,
       });
       this.showAddModal.set(false);
     } catch (err) {
@@ -115,7 +152,50 @@ export class MemberListComponent {
     }
   }
 
+  // ── Bulk-generate yearly dues ───────────────────────────────────────────────
+
+  openBulkGenerate() {
+    const year = new Date().getFullYear();
+    this.bulkYear.set(year);
+    this.bulkAmount = '';
+    this.bulkDescription = this.i18n.t('bulkGenerate.defaultDescription', { year: String(year) });
+    this.bulkError.set('');
+    this.bulkResult.set(null);
+    this.showBulkGenerate.set(true);
+  }
+
+  async confirmBulkGenerate() {
+    const amount = parseFloat(this.bulkAmount);
+    const description = this.bulkDescription.trim();
+    if (!description || isNaN(amount)) {
+      this.bulkError.set(this.i18n.t('memberDetail.errorFillFields'));
+      return;
+    }
+
+    const year = this.bulkYear();
+    const dues = this.dues();
+    const eligibleIds = this.activeMembers()
+      .filter((m) => !dues.some((d) => d.memberId === m.id && getDueYear(d) === year))
+      .map((m) => m.id);
+    const skipped = this.activeMembers().length - eligibleIds.length;
+
+    this.bulkLoading.set(true);
+    this.bulkError.set('');
+    try {
+      const dueDate = Timestamp.fromDate(new Date(year, 11, 31));
+      const created = await this.duesService.bulkGenerate(eligibleIds, { description, amount, year, dueDate });
+      this.bulkResult.set({ created, skipped });
+    } catch (err) {
+      this.bulkError.set(this.parseError(err, this.i18n.t('bulkGenerate.errorGenerate')));
+    } finally {
+      this.bulkLoading.set(false);
+    }
+  }
+
   private parseError(err: unknown, fallback: string): string {
+    if (err instanceof MemberNumberTakenError) {
+      return this.i18n.t('members.errorNumberTaken', { number: String(err.number) });
+    }
     if (err && typeof err === 'object' && 'code' in err) {
       const code = (err as { code: string }).code;
       switch (code) {
@@ -185,11 +265,15 @@ export class MemberListComponent {
           phone: pm.phone,
           notes: pm.notes,
           active: pm.active,
+          memberNumber: pm.memberNumber,
         });
         newMemberIds.set(pm.email?.toLowerCase() ?? pm.name.toLowerCase(), id);
       }
 
       for (const { existing, updated } of preview.membersToUpdate) {
+        if (updated.memberNumber != null && updated.memberNumber !== existing.memberNumber) {
+          await this.memberService.updateMemberNumber(existing.id, updated.memberNumber, existing.memberNumber);
+        }
         await this.memberService.update(existing.id, {
           name: updated.name,
           email: updated.email,
@@ -214,6 +298,7 @@ export class MemberListComponent {
           memberId,
           description: pd.description,
           amount: pd.amount,
+          year: pd.year,
           dueDate: Timestamp.fromDate(pd.dueDate),
           paid: pd.paid,
           paidAt: pd.paidAt ? Timestamp.fromDate(pd.paidAt) : undefined,

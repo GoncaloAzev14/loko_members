@@ -2,10 +2,10 @@ import { Component, inject, signal, computed, OnInit, CUSTOM_ELEMENTS_SCHEMA } f
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MemberService } from '../../services/member.service';
+import { MemberService, MemberNumberTakenError } from '../../services/member.service';
 import { DuesService } from '../../services/dues.service';
 import { ClubService } from '../../services/club.service';
-import { Member, Due } from '../../models/models';
+import { Member, Due, getDueYear } from '../../models/models';
 import { Timestamp } from '@angular/fire/firestore';
 import { map } from 'rxjs';
 import { I18nService } from '../../services/i18n.service';
@@ -43,13 +43,15 @@ export class MemberDetailComponent implements OnInit {
   editEmail = '';
   editPhone = '';
   editNotes = '';
+  editMemberNumber = '';
   editLoading = signal(false);
+  editError = signal('');
 
   // Add due
   showAddDue = signal(false);
   dueDesc = '';
   dueAmount = '';
-  dueDateStr = '';
+  dueYear = new Date().getFullYear();
   addDueLoading = signal(false);
   addDueError = signal('');
 
@@ -65,17 +67,36 @@ export class MemberDetailComponent implements OnInit {
     this.editEmail = m.email ?? '';
     this.editPhone = m.phone ?? '';
     this.editNotes = m.notes ?? '';
+    this.editMemberNumber = m.memberNumber?.toString() ?? '';
   }
 
   startEdit() {
     const m = this.member();
     if (m) this.resetEdit(m);
+    this.editError.set('');
     this.editing.set(true);
   }
 
   async saveEdit() {
+    const m = this.member();
+    if (!m) return;
+
+    const numberStr = this.editMemberNumber.trim();
+    let newNumber: number | undefined;
+    if (numberStr) {
+      newNumber = parseInt(numberStr, 10);
+      if (isNaN(newNumber) || newNumber < 1) {
+        this.editError.set(this.i18n.t('members.errorInvalidNumber'));
+        return;
+      }
+    }
+
     this.editLoading.set(true);
+    this.editError.set('');
     try {
+      if (newNumber !== undefined && newNumber !== m.memberNumber) {
+        await this.memberService.updateMemberNumber(this.memberId, newNumber, m.memberNumber);
+      }
       await this.memberService.update(this.memberId, {
         name: this.editName.trim(),
         email: this.editEmail.trim() || undefined,
@@ -83,6 +104,8 @@ export class MemberDetailComponent implements OnInit {
         notes: this.editNotes.trim() || undefined,
       });
       this.editing.set(false);
+    } catch (err) {
+      this.editError.set(this.parseError(err, this.i18n.t('memberDetail.errorSave')));
     } finally {
       this.editLoading.set(false);
     }
@@ -110,15 +133,20 @@ export class MemberDetailComponent implements OnInit {
   openAddDue() {
     this.dueDesc = '';
     this.dueAmount = '';
-    this.dueDateStr = '';
+    this.dueYear = new Date().getFullYear();
     this.addDueError.set('');
     this.showAddDue.set(true);
   }
 
   async addDue() {
     const amount = parseFloat(this.dueAmount);
-    if (!this.dueDesc.trim() || isNaN(amount) || !this.dueDateStr) {
+    if (!this.dueDesc.trim() || isNaN(amount) || !this.dueYear) {
       this.addDueError.set(this.i18n.t('memberDetail.errorFillFields'));
+      return;
+    }
+    const duplicate = this.dues().some((d) => getDueYear(d) === this.dueYear);
+    if (duplicate) {
+      this.addDueError.set(this.i18n.t('memberDetail.errorDuplicateYear', { year: String(this.dueYear) }));
       return;
     }
     this.addDueLoading.set(true);
@@ -128,7 +156,8 @@ export class MemberDetailComponent implements OnInit {
         memberId: this.memberId,
         description: this.dueDesc.trim(),
         amount,
-        dueDate: Timestamp.fromDate(new Date(this.dueDateStr)),
+        year: this.dueYear,
+        dueDate: Timestamp.fromDate(new Date(this.dueYear, 11, 31)),
       });
       this.showAddDue.set(false);
     } catch (err) {
@@ -139,6 +168,9 @@ export class MemberDetailComponent implements OnInit {
   }
 
   private parseError(err: unknown, fallback: string): string {
+    if (err instanceof MemberNumberTakenError) {
+      return this.i18n.t('members.errorNumberTaken', { number: String(err.number) });
+    }
     if (err && typeof err === 'object' && 'code' in err) {
       const code = (err as { code: string }).code;
       switch (code) {

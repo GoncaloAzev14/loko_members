@@ -49,7 +49,13 @@ export class DuesService {
     );
   }
 
-  async add(data: { memberId: string; description: string; amount: number; dueDate: Timestamp }): Promise<void> {
+  async add(data: {
+    memberId: string;
+    description: string;
+    amount: number;
+    year: number;
+    dueDate: Timestamp;
+  }): Promise<void> {
     const clubId = this.clubService.clubId()!;
     const id = uuidv4();
     const due: Due = { id, paid: false, createdAt: Timestamp.now(), ...data };
@@ -60,6 +66,7 @@ export class DuesService {
     memberId: string;
     description: string;
     amount: number;
+    year: number;
     dueDate: Timestamp;
     paid: boolean;
     paidAt?: Timestamp;
@@ -68,6 +75,20 @@ export class DuesService {
     const id = uuidv4();
     const due: Due = { id, createdAt: Timestamp.now(), ...data };
     await setDoc(doc(this.duesCol(clubId), id), due);
+  }
+
+  /** Creates one due per member ID, sequentially. Callers decide which members to skip. */
+  async bulkGenerate(
+    memberIds: string[],
+    data: { description: string; amount: number; year: number; dueDate: Timestamp }
+  ): Promise<number> {
+    const clubId = this.clubService.clubId()!;
+    for (const memberId of memberIds) {
+      const id = uuidv4();
+      const due: Due = { id, memberId, paid: false, createdAt: Timestamp.now(), ...data };
+      await setDoc(doc(this.duesCol(clubId), id), due);
+    }
+    return memberIds.length;
   }
 
   async markPaid(id: string, at?: Timestamp): Promise<void> {

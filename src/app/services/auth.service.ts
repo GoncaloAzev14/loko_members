@@ -8,6 +8,7 @@ import {
   User,
   updateProfile,
   reload,
+  sendPasswordResetEmail,
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
@@ -48,6 +49,10 @@ export class AuthService {
 
   async signIn(email: string, password: string): Promise<void> {
     await signInWithEmailAndPassword(this.auth, email, password);
+  }
+
+  async resetPassword(email: string): Promise<void> {
+    await sendPasswordResetEmail(this.auth, email);
   }
 
   async signOut(): Promise<void> {

@@ -45,6 +45,10 @@
     </form>
 
     <p class="auth-footer">
+      <a routerLink="/forgot-password">{{ i18n.t('login.forgotPassword') }}</a>
+    </p>
+
+    <p class="auth-footer">
       {{ i18n.t('login.noAccount').split('?')[0] }}? <a routerLink="/signup">{{ i18n.t('login.noAccount').split('? ')[1] }}</a>
     </p>
   </div>

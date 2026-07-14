@@ -12,6 +12,12 @@ export const routes: Routes = [
     canActivate: [publicGuard],
     loadComponent: () => import('./pages/sign-up/sign-up').then((m) => m.SignUpComponent),
   },
+  {
+    path: 'forgot-password',
+    canActivate: [publicGuard],
+    loadComponent: () =>
+      import('./pages/forgot-password/forgot-password').then((m) => m.ForgotPasswordComponent),
+  },
   { path: 'join', redirectTo: '/clubs', pathMatch: 'full' },
   {
     path: '',
